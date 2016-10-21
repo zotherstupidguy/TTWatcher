@@ -9,7 +9,7 @@ module Sites
     end
 
     def address(path='')
-      return @root if path.empty?
+      return @root if path.nil? || path.empty?
 
       path = '/' + path unless path[0] == '/'
       @root + path

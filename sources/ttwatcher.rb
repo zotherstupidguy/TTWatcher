@@ -35,7 +35,12 @@ module TTWatcher
   def self.start
     #site = TTWatcher::Connection.new
     site = Site::RUTOR
-    site.find_torrent 'кино'
+    torrents = site.find_torrent('маша')
+
+    torrents.each do |t|
+      puts t.name
+      puts t.url
+    end
     #result = site.download_page "new-ru.org"
     #result = site.download_page 'rutor.is' # rutor.is
     #puts result

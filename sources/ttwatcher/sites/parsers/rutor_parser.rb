@@ -7,17 +7,22 @@ module Parsers
   #
   class Rutor < SimpleParser
     private
-
+    #
+    # Output: if <ok>    : TorrentList instance (can be empty thought)
+    #         if <error> : nil
+    #
     def extract_torrents
-      structure.css('tr[@class="gai"]').each do |node|
-        hsh =parse_node(node)
-        Torrent.new hsh
+      list = TorrentList.new
+      structure.css('tr[@class="gai"], tr[@class="tum"]').each do |node|
+        hsh_data = parse_node(node)
+        list << Torrent.new(hsh_data)
       end
+      list
     end
 
     #
-    # callback: should save in +@page+ new page with torrents. If there no
-    #           content for parsing it just returns empty string.
+    # output: if <ok> : changes +@page+ with new content (unparsed html). If
+    #                   there no new content for parsing it return empty string.
     #
     def goto_next_page
       new_page_url = links_list.pop
@@ -27,7 +32,7 @@ module Parsers
     end
 
     #
-    # Returns urls list for future parsing.
+    # output: if <ok> : returns list of urls that needs to been parsed.
     #
     def links_list
       return @links if @links_list_loaded
@@ -38,7 +43,7 @@ module Parsers
     end
 
     #
-    # +Rutor+ has all data that we need in one place
+    # +Rutor+ placed all data that we need in one place.
     #
     def structure
       super.xpath '//div[@id="index"]'
@@ -46,12 +51,16 @@ module Parsers
 
     def parse_node(node)
       hsh = Hash.new
-      hsh[:short_link] = node.css('a[@class="downgif"]').attribute('href').to_s
-      hsh[:magnet_link] = node.css('a')[1].attribute('href').to_s
+
+      hsh[:short_link]          = node.css('a[@class="downgif"]').attribute('href').to_s
+      hsh[:magnet_link]         = node.css('a')[1].attribute('href').to_s
       hsh[:url_to_torrent_page] = node.css('a')[2].attribute('href').to_s
-      hsh[:torrent_nam] = node.css('a')[2].text
-      hsh[:torrent_size] = node.css('td[@align="right"]').text
-      hsh[:direct_download_link] = assigned_site.address hsh[:short_link]
+      hsh[:torrent_name]        = node.css('a')[2].text
+      hsh[:torrent_size]        = node.css('td[@align="right"]').text
+
+      hsh[:direct_download_link] = assigned_site.address(hsh[:direct_download_link])
+      hsh[:short_link]           = assigned_site.address(hsh[:short_link])
+      hsh[:url_to_torrent_page]  = assigned_site.address(hsh[:url_to_torrent_page] )
       hsh
     end
   end # class TTWatcher::Parsers::Rutor

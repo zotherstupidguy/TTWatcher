@@ -1,0 +1,22 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.4.0)
+    httpclient (2.8.2.4)
+    mini_portile2 (2.1.0)
+    nokogiri (1.6.8.1)
+      mini_portile2 (~> 2.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  addressable (~> 2.4.0)
+  httpclient (~> 2.8.2)
+  nokogiri (~> 1.6.8)
+
+RUBY VERSION
+   ruby 2.3.1p112
+
+BUNDLED WITH
+   1.13.5

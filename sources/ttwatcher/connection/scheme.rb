@@ -2,32 +2,15 @@
 
 module TTWatcher
 module InternetConnection
+
   #
   # <<Breaking news>> Some cites still using http.
   #
-  # This module designed to switch scheme for selected url, if default (https)
+  # This module designed to switch&normalizate scheme for +url+ instance, if default (https)
   # scheme not supported.
   #
-  class Scheme
-    def initialize(protocol = nil)
-      @scheme = protocol || DEFAULT
-      @switched = false
-    end
-    #
-    # <Warn> +normalization!+ method mutates +url+ param.
-    #
-    def normalization!(url)
-      unless @switched
-        return url if protocol_included?(url, :any)
-      end
-
-      return url if protocol_included?(url, @scheme)
-
-      strip_url url
-      add_actual_protocol url
-    end
-
-    def switch
+  module Scheme
+    def scheme_switch
       current_position = PROTOCOLS.find_index @scheme
       if PROTOCOLS.length > current_position
         @scheme = PROTOCOLS[current_position.next]
@@ -37,15 +20,6 @@ module InternetConnection
       @switched = true
     end
 
-    def reset
-      @scheme = DEFAULT
-      @switched = false
-    end
-
-    def to_s
-      @scheme.to_s
-    end
-
     private
 
     attr_accessor :first_load
@@ -53,23 +27,38 @@ module InternetConnection
     PROTOCOLS = [:https, :http]
     DEFAULT   = PROTOCOLS.first
 
-    def strip_url(url)
+    def normalization!
+      unless @switched
+        return encode_url if protocol_included? :any
+      end
+      return encode_url if protocol_included? @scheme
+
+      strip_url
+      add_actual_protocol
+    end
+
+    def set_scheme(protocol = nil)
+      @scheme = protocol || DEFAULT
+      @switched = false
+    end
+
+    def strip_url
       PROTOCOLS.each do |protocol|
-        url.gsub!(protocol.to_s << '://', '') if protocol_included? url, protocol
+        @url.gsub!(protocol.to_s << '://', '') if protocol_included? protocol
       end
     end
 
-    def add_actual_protocol(url)
-      url.replace "#{@scheme.to_s}://#{url}"
+    def add_actual_protocol
+      @url.replace "#{@scheme.to_s}://#{@url}"
     end
 
-    def protocol_included?(url, protocol)
+    def protocol_included?(protocol)
       if protocol == :any
-        PROTOCOLS.any? { |p| protocol_included? url, p }
+        PROTOCOLS.any? { |p| protocol_included? p }
       else
-        (url =~ Regexp.new(protocol.to_s << '://')) == 0
+        (@url =~ Regexp.new(protocol.to_s << '://')) == 0
       end
     end
-  end # class ::InternetConnection::ConnectionProtocol
+  end # module ::InternetConnection::Scheme
 end # module TTWatcher::InternetConnection
 end # module TTWatcher

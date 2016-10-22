@@ -12,15 +12,14 @@ module Sites
     private
 
     def search_url(name)
-      @root + SEARCH_ROOT % name
+      @hostname + SEARCH_ROOT % name
     end
 
     def parser
       Parsers::Rutor.new self
     end
 
-    GLOBAL_ROOT = '/browse/0/0/0/0/%s'.freeze # note: '%s' used for later interpolation
-    SEARCH_ROOT = '/search/%s'.freeze
+    SEARCH_ROOT = '/search/%s'.freeze # note: '%s' used for later interpolation
   end # classTT Watcher::Sites::RutorIs
 end # module TTWatcher::Sites
 end # module TTWatcher

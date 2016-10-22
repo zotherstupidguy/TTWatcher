@@ -11,12 +11,13 @@ module TTWatcher
 
   require "addressable/uri"
   require 'nokogiri'
-  require 'httpclient'
+  require 'rest-client'
 
   # project structure
 
-  require_relative 'ttwatcher/message'
   require_relative 'ttwatcher/connection/scheme'
+  require_relative 'ttwatcher/connection/url'
+  require_relative 'ttwatcher/message'
   require_relative 'ttwatcher/connection'
   require_relative 'ttwatcher/torrent'
 
@@ -33,14 +34,16 @@ module TTWatcher
   require_relative 'ttwatcher/sites'
 
   def self.start
-    #site = TTWatcher::Connection.new
     site = Site::RUTOR
-    torrents = site.find_torrent('маша')
+    torrents = site.find_torrent('игра престолов')
 
-    torrents.each do |t|
-      puts t.name
-      puts t.url
-    end
+     torrents.each do |t|
+       puts t.name
+       puts t.url
+       puts t.size
+       puts t.tracker
+       puts '-------------'
+     end
     #result = site.download_page "new-ru.org"
     #result = site.download_page 'rutor.is' # rutor.is
     #puts result

@@ -7,56 +7,59 @@ module TTWatcher
   class Connection
     include InternetConnection
     #
-    # settings by default: redirect_allowed => true
+    # input: redirect_allowed => true
     #
     def initialize(params = {})
-      @client   = HTTPClient.new
-      @scheme = Scheme.new()
       @settings = default_settings.merge params
     end
 
     #
-    # input: string with url in any form: "https://site.com",
-    # "site.com", "www.site.com", )
+    # input: url (string) in any form: "https://site.com",
+    #                                  "site.com",
+    #                                  "www.site.com"
     #
-    # output: for success ==> requested page
+    # output: for success ==> requested page (unparsed html)
     #         for fail    ==> nil
     #
-    def download_page(url)
-      @scheme.normalization! url # note: mutates an url
-      @responce = @client.get Addressable::URI.parse(url) # <<DO NOT TRUST IN +URI.decode+ >>
-      if responce_ok?
-        return @responce.body
-      else
-        return responce_analysis
-      end
+    #
+    # note: <<DO NOT TRUST IN +URI.decode+ >> (default lib)
+    #
+    def download_page(text)
+      url = Url.new(text)
+      @responce = client.execute(method: :get, url: url.to_s, max_redirects: 0)
+      return responce_analysis
+
     rescue Errno::ECONNREFUSED # ==> Scheme not supported. Try another one.
-      @scheme.switch
+      url.scheme_switch
       retry
+
+    rescue RestClient::MovedPermanently => exception # ==> add custom reaction for redirect responce
+      @responce = exception.response
+      return responce_analysis
+
     rescue URI::InvalidURIError # ==> bad URI
-      MessageWarn.send "impossible to download from: '#{url}' (bad URL)."
+      MessageWarn.send "impossible to download from: '#{url.to_s}' (bad URL)."
       return nil
     end
 
     private
 
-    attr_reader :client, :scheme
+    #
+    # switched from <<HTTPClient>> because <<HTTPClient>> generates
+    # wrong redirect urls in headers['location']
+    #
+    def client
+      @client ||= RestClient::Request
+    end
 
     def default_settings
       { :redirect_allowed => true }
     end
 
-    def page
-      @responce.body
-    end
-
-    def responce_ok?
-      @responce.code == 200
-    end
-
-    # todo: extend with more codes <<if need>>
     def responce_analysis
       case @responce.code
+      when 200
+        message_body
       when 301
         message_moved_permanently
       else
@@ -67,10 +70,16 @@ module TTWatcher
 
     def message_moved_permanently
       return nil unless @settings[:redirect_allowed]
-      redirect_url = @responce.headers['Location']
+      redirect_url = @responce.headers[:location]
       msg = 'Got redirect responce, but "location" field is missed!'
       raise ConnectionError, msg if redirect_url.nil? || redirect_url.empty?
-      download_page redirect_url
+      answer = download_page(redirect_url)
+
+      {notes: {redirect: redirect_url}, output: answer}
+    end
+
+    def message_body
+      @responce.body
     end
 
     class ConnectionError < StandardError; end

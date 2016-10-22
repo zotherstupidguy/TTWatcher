@@ -2,34 +2,101 @@
 
 module TTWatcher
 module Sites
+  #
+  # Class that describes basic information about sites
+  #
   class Site
-
-    def to_s
-      @root
-    end
-
-    def address(path='')
-      return @root if path.nil? || path.empty?
-
-      path = '/' + path unless path[0] == '/'
-      @root + path
-    end
+    attr_reader :hostname # <site name>
 
     def initialize(name)
-      @root = name
+      @hostname = name
       @connection ||= TTWatcher::Connection.new
       @parser = parser
     end
 
+    #
+    #  <<USER ENDPOINT>>
+    #
+    #  Shows site name
+    #
+    def to_s
+      @hostname
+    end
+
+    #
+    # <<USER ENDPOINT>>
+    #
+    # generates part of url that includes site name + path
+    #
+    # example: input  ==> @root = "some.site.com", path = 'hello/world'
+    #          output ==> "some.site.com/hello/world"
+    #
+    # if path not selected it returns +@root+
+    #
+    def address(path='')
+      return @hostname if path.nil? || path.empty?
+      return path if site_name_included?(path)
+
+      path = '/' + path unless path[0] == '/'
+      @hostname + path
+    end
+
+    #
+    # <<USER ENDPOINT>>
+    #
+    # Set separate connection for each instance.
+    # Good if we want use proxies/multithreading somewhere in future.
+    #
     def download(url)
-      @connection.download_page url
+      url = address(url) unless site_name_included?(url)
+      answer = @connection.download_page url
+      answer_analysis(answer)
     end
 
     private
 
-    def parser; end
+    #
+    # output: if url includes site name : <true>
+    #         otherwise                 : <false>
+    #
+    def site_name_included?(url)
+      (url =~ Regexp.new(@hostname.to_s + '/')) == 0
+    end
 
-    attr_reader :root
+    #
+    # In normal state it just returns same thing that +download_page+ method
+    # does.
+    #
+    # But also it allow to be more flexible for situations where we need to
+    # change current object state (for example switch proxy if getting no responce)
+    #
+    # input: answer as [HASH]   there something that need specific reaction
+    #        answer as [STRING] normal answer / no special reaction needed
+    #        answer as [NIL]    normal answer / no special reaction needed
+    #
+    # output: for success ==> requested page (unparsed html)
+    #         for fail    ==> nil
+    #
+    def answer_analysis(answer)
+      return answer if answer.nil? || answer.is_a?(String)
+      if answer[:notes]
+        check_if_hostname_changed answer[:notes][:redirect]
+      end
+      answer[:output]
+    end
+
+    #
+    # reaction if redirected to new +@hostname+, otherwise no reaction
+    #
+    def check_if_hostname_changed(url)
+      return unless url
+
+      # no reaction need if +@hostname+ not changed after redirect
+      return if (new_url = Addressable::URI.parse(url).host) == @hostname
+
+      MessageWarn.send "Redirected: '#{@hostname}' has been changed to '#{new_url}'"
+      @hostname = new_url
+    end
   end # classTTWatcher::Sites::Site
 end # module TTWatcher::Sites
 end # module TTWatcher

@@ -2,28 +2,43 @@
 
 module TTWatcher
 module Sites
+  #
+  # Inheritance from this class means that child class provides minimal
+  # torrent functional (can search +torrents+ by name)
+  #
+  # I suppose any additional functional should be provided throw new modules,
+  # but i am not sure. Anyway let the adventure begin from this code. Medved.
+  #
+  # note:
+  #
+  # Do not forget overload next methods: +parser+
+  #                                      +search_url+
+  #
   class TorrentSite < Site
-
-    # tries to extract all sites from site
-    def find_all_torrents; end
-
-    # tries to found specific torrent
+    #
+    # <<USER ENDPOINT>>
+    #
+    # it tries to found specific torrent.
+    #
+    # Output: if <ok>    : TorrentList instance (can be empty if nothing was found)
+    #         if <error> : nil
+    #
     def find_torrent(name)
       page = download(search_url(name))
       @parser.parse page
     end
 
-    # tries to found sites by specific date
-    def find_torrents_by_date; end
-
     private
 
+    #
+    # override with specific parser
+    #
+    def parser; end # +abstract+
+
+    #
+    # override with specific search url
+    #
     def search_url(name) end # +abstract+
-
-    attr_reader :parser
-
-    TransactionSize = 200 # Some queries can be so big. this is
-
   end # class TTWatcher::Sites::TorrentSite
 end # module TTWatcher::Sites
 end # module TTWatcher

@@ -5,8 +5,10 @@ module Parsers
   #
   # Parent class for any Parser classes
   #
-  # All you need to see here: it is  abstract method +parse+. it should be
-  # somehow implemented in any real parser.
+  # All you need to see here: abstract method +parse+. it should be somehow
+  # implemented in any real parser.
+  #
+  #  Do not forget overload next methods: +parse+
   #
   class AbstractParser
     def initialize(site)
@@ -34,10 +36,13 @@ module Parsers
   #
   # Most sites (like +rutor+) can be parsed with very same algorithm
   #
+  # Do not forget overload next methods: +extract_torrents+
+  #                                      +goto_next_page+
+  #
   class SimpleParser < AbstractParser
     #
     # input: page   [core]     [string]
-    #        params [optional] [hash]
+    #        params [optional] [hash] todo: customize method with params
     #
     # output: if <ok>    : TorrentList object with torrents.
     #                      Can be empty if nothing was found
@@ -46,22 +51,24 @@ module Parsers
     #
     def parse(page, **params)
       return nil if page.is_a? NilClass
+
       @page, @structure = page, Nokogiri::HTML(page)
       torrents = TorrentList.new
       until current_page.empty?
         if (extracted = extract_torrents).nil?
-           MessageError.send "extract method for #{self.class} parser return +nil+"
+          msg = "+extract_torrents+ method in #{self.class} parser return +nil+"
+          MessageError.send msg
         else
           torrents << extracted
         end
         goto_next_page
       end
       torrents
-    rescue Exception => e # /bla-bla-bla/ IT IS SO BAD /bla-bla-bla/
+    rescue Exception => e # IT IS SO BAD. DO NOT /rescue Exception/
                           # <<important>> i do understand what i do.
-      msg = "Unknown exception during parse procedure has been raised: #{e.message}"
+      msg = "Unknown exception has been raised: '#{e.message}' for '#{self.class}' parser."
       MessageError.send msg
-      warn msg
+      warn msg, '- -' * 20, e.backtrace.join("\n")
       return nil
     end
 
@@ -69,9 +76,21 @@ module Parsers
 
     attr_reader :page, :structure
 
-    def extract_torrents; ''; end       # +abstract+
+    def current_page
+      @page
+    end
+11
+    #
+    # Output: if <ok>    : TorrentList instance (can be empty thought)
+    #         if <error> : nil
+    #
+    def extract_torrents; TorrentList.new; end # +abstract+
+
+    #
+    # output: if <ok> : changes +@page+ with new content (unparsed html). If
+    #                   there no new content it should return empty string.
+    #
     def goto_next_page; @page = ''; end # +abstract+
-    def current_page; @page; end        # +abstract+
   end # class TTWatcher::Parsers::SimpleParser
 
   # ----------------------------------------------------

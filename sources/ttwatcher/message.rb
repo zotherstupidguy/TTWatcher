@@ -33,6 +33,8 @@ module TTWatcher
   # Send [INFO] message to logger
   #
   class Message
+    include Singleton
+
     class << self
       def self.send(text)
         logger.add Logger::INFO, text

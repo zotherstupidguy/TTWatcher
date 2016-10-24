@@ -8,7 +8,7 @@ module Parsers
   class Rutor < SimpleParser
     private
     #
-    # Output: if <ok>    : TorrentList instance (can be empty thought)
+    # output: if <ok>    : TorrentList instance (can be empty thought)
     #         if <error> : nil
     #
     def extract_torrents

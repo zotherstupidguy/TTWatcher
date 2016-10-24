@@ -7,7 +7,7 @@ module Sites
     include Singleton
 
     def initialize
-      super 'rutracker'
+      super 'rutracker.org'
     end
 
     private

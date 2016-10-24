@@ -8,24 +8,22 @@ module TTWatcher
     include InternetConnection
     #
     # input: redirect_allowed => true
+    #        params [hash][optional] hash with optional params
     #
     def initialize(params = {})
       @settings = default_settings.merge params
     end
 
     #
-    # input: url (string) in any form: "https://site.com",
+    # input: url [string] in any form: "https://site.com",
     #                                  "site.com",
     #                                  "www.site.com"
     #
-    # output: for success ==> requested page (unparsed html)
-    #         for fail    ==> nil
-    #
-    #
-    # note: <<DO NOT TRUST IN +URI.decode+ >> (default lib)
+    # output: if <ok>    : requested page (unparsed html)
+    #         if <error> : nil
     #
     def download_page(text)
-      url = Url.new(text)
+      url = Url.new text, settings[:url] || {}
       @responce = client.execute(method: :get, url: url.to_s, max_redirects: 0)
       return responce_analysis
 
@@ -33,7 +31,8 @@ module TTWatcher
       url.scheme_switch
       retry
 
-    rescue RestClient::MovedPermanently => exception # ==> add custom reaction for redirect responce
+    rescue RestClient::MovedPermanently => exception # ==> add custom reaction
+                                                     # for redirect responce
       @responce = exception.response
       return responce_analysis
 
@@ -44,9 +43,11 @@ module TTWatcher
 
     private
 
+    attr_reader :settings
+
     #
-    # switched from <<HTTPClient>> because <<HTTPClient>> generates
-    # wrong redirect urls in headers['location']
+    # Switched from <<HTTPClient>> because sometimes it can lose russians symbols
+    # in headers['location'] (for +redirect+ message)
     #
     def client
       @client ||= RestClient::Request

@@ -11,50 +11,55 @@ module InternetConnection
   #
   module Scheme
     def scheme_switch
-      current_position = PROTOCOLS.find_index @scheme
-      if PROTOCOLS.length > current_position
-        @scheme = PROTOCOLS[current_position.next]
+      @allowed_schemes -= [@scheme ]
+      if @allowed_schemes.length > 0
+        @scheme = @allowed_schemes.first
       else
-        MessageWarn.send "Unknown protocol requested: #{@scheme}!"
+        MessageWarn.send "Unknown scheme requested: #{@scheme}!"
       end
       @switched = true
+
+      normalization!
     end
 
     private
 
     attr_accessor :first_load
 
-    PROTOCOLS = [:https, :http]
-    DEFAULT   = PROTOCOLS.first
+    SCHEMES = [:https, :http]
+    DEFAULT   = SCHEMES.first
+
+    def set_scheme(scheme = nil)
+      @scheme = scheme || DEFAULT
+      @allowed_schemes = SCHEMES.dup
+      @switched = false
+
+      normalization!
+    end
 
     def normalization!
       unless @switched
-        return encode_url if protocol_included? :any
+        return encode_url if scheme_included? :any
       end
-      return encode_url if protocol_included? @scheme
+      return encode_url if scheme_included? @scheme
 
-      strip_url
-      add_actual_protocol
+      strip_schemes_from_url!
+      add_actual_scheme!
     end
 
-    def set_scheme(protocol = nil)
-      @scheme = protocol || DEFAULT
-      @switched = false
-    end
-
-    def strip_url
-      PROTOCOLS.each do |protocol|
-        @url.gsub!(protocol.to_s << '://', '') if protocol_included? protocol
+    def strip_schemes_from_url!
+      SCHEMES.each do |protocol|
+        @url.gsub!(protocol.to_s << '://', '') if scheme_included? protocol
       end
     end
 
-    def add_actual_protocol
+    def add_actual_scheme!
       @url.replace "#{@scheme.to_s}://#{@url}"
     end
 
-    def protocol_included?(protocol)
+    def scheme_included?(protocol)
       if protocol == :any
-        PROTOCOLS.any? { |p| protocol_included? p }
+        SCHEMES.any? { |p| scheme_included? p }
       else
         (@url =~ Regexp.new(protocol.to_s << '://')) == 0
       end

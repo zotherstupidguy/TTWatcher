@@ -33,10 +33,12 @@ module TTWatcher
   require_relative 'ttwatcher/sites/rutracker'
   require_relative 'ttwatcher/sites'
 
-  def self.start
-    site = Site::RUTOR
-    torrents = site.find_torrent('игра престолов')
+  require_relative 'ttwatcher/torrent_agent'
 
+  def self.start
+    torrents = TorrentAgent.find 'кот'
+#    puts Sites::LIST
+    if torrents
      torrents.each do |t|
        puts t.name
        puts t.url
@@ -44,11 +46,9 @@ module TTWatcher
        puts t.tracker
        puts '-------------'
      end
-    #result = site.download_page "new-ru.org"
-    #result = site.download_page 'rutor.is' # rutor.is
-    #puts result
-  end
+    end
 
+  end
 end # module TTWatcher
 
 TTWatcher.start

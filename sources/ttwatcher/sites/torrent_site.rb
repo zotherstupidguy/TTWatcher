@@ -20,10 +20,15 @@ module Sites
     #
     # it tries to found specific torrent.
     #
-    # Output: if <ok>    : TorrentList instance (can be empty if nothing was found)
+    # input: +name+   [string] torrent name
+    #
+    # output: if <ok>    : TorrentList instance (can be empty if nothing was found)
     #         if <error> : nil
     #
+    # note: minimal length for +name+ is 2. <no reason to search short words like 'aa'>
+    #
     def find_torrent(name)
+      return nil if name.nil? || name.length <= 2
       page = download(search_url(name))
       @parser.parse page
     end

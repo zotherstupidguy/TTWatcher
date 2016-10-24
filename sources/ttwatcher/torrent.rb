@@ -46,7 +46,6 @@ module TTWatcher
   # /Delegator/ based on my +ObjectList+ Snippet 2.0.
   #
   class TorrentList
-    extend  Forwardable
     include Enumerable
 
     # Register +push+ method
@@ -63,11 +62,11 @@ module TTWatcher
       else
         raise UnexpectedClass.new other
       end
+      self
     end
 
     alias :<< :push
-
-#    def_delegator @torrents, :pop, pop
+    alias :+  :push
 
     def initialize
       @torrents = []
@@ -79,8 +78,11 @@ module TTWatcher
       end
     end
 
+    #
+    # this supposed to been raised when we trying to put into storage not
+    # +Torrent+ or +TorrentList+ instance.
+    #
     class UnexpectedClass < StandardError
       def initialize(arg); super "Expected to get Torrent (or TorrentList) instance, but got #{arg.class} instance"; end end
-
   end # class TTWatcher::TorrentList
 end # module TTWatcher

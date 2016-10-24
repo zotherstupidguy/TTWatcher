@@ -11,6 +11,10 @@ module Sites
 
     private
 
+    def connection_settings
+      { url: { force_scheme: :http } }
+    end
+
     def search_url(name)
       @hostname + SEARCH_ROOT % name
     end

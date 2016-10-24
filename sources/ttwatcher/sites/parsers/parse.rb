@@ -8,11 +8,12 @@ module Parsers
   # All you need to see here: abstract method +parse+. it should be somehow
   # implemented in any real parser.
   #
-  #  Do not forget overload next methods: +parse+
+  # note: Do not forget overload next methods: +parse+
   #
   class AbstractParser
-    def initialize(site)
+    def initialize(site, settings = {})
       @assigned_site = site
+      @settings = settings
     end
 
     #
@@ -29,6 +30,7 @@ module Parsers
     # +assigned_site+ provide sensitive information that parser actually need
     #
     attr_reader :assigned_site
+    attr_reader :settings
   end # class TTWatcher::Parsers::AbstractParser
 
   # ----------------------------------------------------
@@ -42,14 +44,13 @@ module Parsers
   class SimpleParser < AbstractParser
     #
     # input: page   [core]     [string]
-    #        params [optional] [hash] todo: customize method with params
     #
     # output: if <ok>    : TorrentList object with torrents.
     #                      Can be empty if nothing was found
     #
     #         if <error> : nil
     #
-    def parse(page, **params)
+    def parse(page)
       return nil if page.is_a? NilClass
 
       @page, @structure = page, Nokogiri::HTML(page)
@@ -79,9 +80,9 @@ module Parsers
     def current_page
       @page
     end
-11
+
     #
-    # Output: if <ok>    : TorrentList instance (can be empty thought)
+    # output: if <ok>    : TorrentList instance (can be empty thought)
     #         if <error> : nil
     #
     def extract_torrents; TorrentList.new; end # +abstract+

@@ -14,7 +14,6 @@ module Sites
     def parser
       Parsers::TFile.new self
     end
-
   end # classTT Watcher::TFile
 end # module TTWatcher::Sites::TFile
 end # module TTWatcher

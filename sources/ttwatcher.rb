@@ -23,21 +23,23 @@ module TTWatcher
   require_relative 'ttwatcher/torrent'
 
   require_relative 'ttwatcher/sites/parsers/parse'
+  require_relative 'ttwatcher/sites/parsers/simple_parser'
+
   require_relative 'ttwatcher/sites/parsers/rutor_parser'
-  require_relative 'ttwatcher/sites/parsers/rutracker_parser'
   require_relative 'ttwatcher/sites/parsers/megashara_parser'
+  require_relative 'ttwatcher/sites/parsers/unionpeer_parser'
 
   require_relative 'ttwatcher/sites/site'
   require_relative 'ttwatcher/sites/torrent_site'
   require_relative 'ttwatcher/sites/rutor'
   require_relative 'ttwatcher/sites/megashara'
-  require_relative 'ttwatcher/sites/rutracker'
+  require_relative 'ttwatcher/sites/unionpeer'
   require_relative 'ttwatcher/sites'
 
   require_relative 'ttwatcher/torrent_agent'
 
   def self.start
-    torrents = TorrentAgent.find 'В поисках Дори '
+    torrents = TorrentAgent.find 'дракон'
     if torrents
      torrents.each do |t|
        puts t.name

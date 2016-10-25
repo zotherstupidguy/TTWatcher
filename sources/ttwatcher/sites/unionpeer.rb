@@ -2,8 +2,10 @@
 
 module TTWatcher
 module Sites
-  class Rutor < TorrentSite # > ex Rutor.org
+
+  class Unionpeer < TorrentSite
     include Singleton
+
     #
     # it tries to found specific torrent.
     #
@@ -16,29 +18,31 @@ module Sites
     #
     def find_torrent(name)
       return nil unless torrent_name_valid? name
-      page = download(search_url(name))
+      params = { url: { query_params: { 'nm' => name } } }
+      page = download(search_url, params)
       parser.parse page
     end
 
     private
 
     def initialize
-      super 'rutor.is'
+      super 'unionpeer.org'
     end
 
     def default_connection_settings
-      { url: { force_scheme: :http } }
+      { url: { force_scheme: :http, encoding: ENCODING } }
     end
 
-    def search_url(name)
-      hostname + SEARCH_ROOT % name
+    def search_url
+      hostname + SEARCH_ROOT
     end
 
     def parser
-      @parser ||= Parsers::Rutor.new(self)
+      @parser ||= Parsers::Unionpeer.new(self, encoding: ENCODING)
     end
 
-    SEARCH_ROOT = '/search/%s'.freeze # note: '%s' used for later interpolation
-  end # classTT Watcher::Sites::RutorIs
+    ENCODING    = Encoding::Windows_1251.to_s
+    SEARCH_ROOT = '/tracker.php'
+  end # class TTWatcher::Sites::Rutracker
 end # module TTWatcher::Sites
 end # module TTWatcher

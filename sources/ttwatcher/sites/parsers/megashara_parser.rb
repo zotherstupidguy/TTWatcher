@@ -5,49 +5,15 @@ module Parsers
   class Megashara < SimpleParser
     private
 
-    #
-    # output: if <ok>    : TorrentList instance (can be empty thought)
-    #         if <error> : nil
-    #
-    def extract_torrents
-      list = TorrentList.new
-      torrents_unparsed.each do |unparsed_torrent|
-        torrent = extract_torrent(unparsed_torrent)
-        list << torrent
-      end
-      list
-    end
-
-    #
-    # output: if <ok> : changes +@page+ with new content (unparsed html). If
-    #                   there no new content it should return empty string.
-    #
-    def goto_next_page
-      if new_pages_list.count > 0
-        url = new_pages_list.pop
-        @page = assigned_site.download url
-      else
-        @page = ''
-      end
-    end
-
-    def torrents_unparsed
-      structure.css('table[@class="table-wide"]').css('table').css('tr')
-    end
-
-    #
-    # output: if <ok> : returns list of urls that needs to been parsed.
-    #
     def new_pages_list
-      return @links if @links_list_loaded
-      @links_list_loaded = true
+      return @links if new_pages_list_loaded?
 
       unparsed_html_data = structure.css('table[@class="pagination-table"]')
                                     .xpath('tr')
                                     .xpath('td')[-2]
       return @links = [] if unparsed_html_data.nil?
 
-      pages_count = unparsed_html_data.css('a').text.to_i - 1
+      pages_count   = unparsed_html_data.css('a').text.to_i - 1
       link_template = unparsed_html_data.css('a').attr('href').to_s
 
       @links = []
@@ -57,9 +23,15 @@ module Parsers
       @links
     end
 
-    # input:  +node+ : Nokogiri::Node
+    def torrents_unparsed
+      structure.css('table[@class="table-wide"]').css('table').css('tr')
+    end
+
+    # input:  +unparsed+ : Nokogiri::Node
     #
-    # output: +hsh+  : Hash (only data  with '++' mark are sent)
+    # output: +torrent+ instance
+    #
+    # fields mapping for +megashara+:
     #
     #     ++   hsh[:torrent_name]         ==> ex. "Cats swimming in pool 2016 BDRIP"
     #     --   hsh[:description]          ==> ex. "Hot CATS. Summer 2016"
@@ -87,6 +59,6 @@ module Parsers
 
       Torrent.new(hsh)
     end
-  end # class TTWatcher::Parsers::Rutracker
+  end # class TTWatcher::Parsers::Megashara
 end # module TTWatcher::Parsers
 end # module TTWatcher

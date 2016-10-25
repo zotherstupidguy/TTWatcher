@@ -11,7 +11,7 @@ module InternetConnection
   #
   module Scheme
     def scheme_switch
-      @allowed_schemes -= [@scheme ]
+      @allowed_schemes -= [ @scheme ]
       if @allowed_schemes.length > 0
         @scheme = @allowed_schemes.first
       else
@@ -26,7 +26,7 @@ module InternetConnection
 
     attr_accessor :first_load
 
-    SCHEMES = [:https, :http]
+    SCHEMES = [ :https, :http ]
     DEFAULT   = SCHEMES.first
 
     def set_scheme(scheme = nil)

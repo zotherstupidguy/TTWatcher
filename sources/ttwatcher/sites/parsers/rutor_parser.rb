@@ -4,46 +4,14 @@ module TTWatcher
 module Parsers
   class Rutor < SimpleParser
     private
-    #
-    # output: if <ok>    : TorrentList instance (can be empty thought)
-    #         if <error> : nil
-    #
-    def extract_torrents
-      list = TorrentList.new
-      torrents_unparsed.each do |unparsed_torrent|
-        torrent = extract_torrent(unparsed_torrent)
-        list << torrent
-      end
-      list
-    end
 
-    #
-    # output: if <ok> : changes +@page+ with new content (unparsed html). If
-    #                   there no new content just return empty string.
-    #
-    def goto_next_page
-      if new_pages_list.count > 0
-        url = new_pages_list.pop
-        @page = assigned_site.download url
-      else
-        @page = ''
-      end
-    end
-
-    #
-    # output: if <ok> : returns list of urls that needs to been parsed.
-    #
     def new_pages_list
-      return @links if @links_list_loaded
-      @links_list_loaded = true
+      return @links if new_pages_list_loaded?
       @links = structure.xpath('b').first.xpath('a').map do |node|
         node.attribute('href').to_s
       end
     end
 
-    #
-    # +Rutor+ placed all data that we need in one place.
-    #
     def structure
       super.xpath '//div[@id="index"]'
     end
@@ -55,6 +23,8 @@ module Parsers
     # input:  +unparsed+ : Nokogiri::Node
     #
     # output: +torrent+ instance
+    #
+    # fields mapping for  +rutor+
     #
     #     ++   hsh[:torrent_name]         ==> ex. "Cats swimming in pool 2016 BDRIP"
     #     --   hsh[:description]          ==> ex. "Hot CATS. Summer 2016"

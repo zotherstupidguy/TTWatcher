@@ -2,14 +2,13 @@
 
 module TTWatcher
 module Sites
-
   class Megashara < TorrentSite
     include Singleton
 
     #
     # it tries to found specific torrent.
     #
-    # input: +name+   [string] torrent name
+    # input: +name+ [string] torrent name
     #
     # output: if <ok>    : TorrentList instance (can be empty if nothing was found)
     #         if <error> : nil
@@ -21,7 +20,7 @@ module Sites
       params = { url: { query_params: { text: name } } }
 
       page = download(search_url, params)
-      @parser.parse page
+      parser.parse page
     end
 
     def initialize
@@ -40,7 +39,7 @@ module Sites
     end
 
     def parser
-      Parsers::Megashara.new self
+      @parser ||= Parsers::Megashara.new(self)
     end
 
     SEARCH_ROOT = '/search/%s'.freeze # note: '%s' used for later interpolation

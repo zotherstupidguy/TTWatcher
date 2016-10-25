@@ -30,7 +30,6 @@ module TTWatcher
     def download_page(text, settings = {})
       local_settings = default_settings.deep_merge(settings)
       url = Url.new(text, local_settings[:url] )
-
       @responce = client.execute(method: :get, url: url.to_s, max_redirects: 0)
       return responce_analysis
 

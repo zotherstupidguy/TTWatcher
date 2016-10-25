@@ -4,10 +4,9 @@ module TTWatcher
   module Sites
 
     LIST = {
-#     :rutracker => Rutracker.instance, # need proxy
       :megashara => Megashara.instance,
       :rutor     => Rutor.instance,
-}
+      :unionpeer => Unionpeer.instance }
 
     #
     # just list of site names that known for program

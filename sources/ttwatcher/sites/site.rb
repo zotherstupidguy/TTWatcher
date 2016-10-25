@@ -12,7 +12,6 @@ module Sites
     def initialize(name)
       @hostname = name
       @connection ||= TTWatcher::Connection.new(default_connection_settings)
-      @parser = parser
     end
 
     #
@@ -21,7 +20,7 @@ module Sites
     #  Shows site name
     #
     def to_s
-      @hostname
+      hostname
     end
 
     #
@@ -35,11 +34,11 @@ module Sites
     # if path not selected it returns +@root+
     #
     def address(path='')
-      return @hostname if path.nil? || path.empty?
+      return hostname if path.nil? || path.empty?
       return path if site_name_included?(path)
 
       path = '/' + path unless path[0] == '/'
-      @hostname + path
+      hostname + path
     end
 
     #
@@ -50,8 +49,8 @@ module Sites
     #
     def download(url, settings = {})
       url = address(url) unless site_name_included?(url)
-      answer = @connection.download_page(url, settings)
-      answer_analysis(answer)
+      answer = connection.download_page(url, settings)
+      answer_analysis answer
     end
 
     private
@@ -66,7 +65,7 @@ module Sites
     #         <false> otherwise
     #
     def site_name_included?(url)
-      (url =~ Regexp.new(@hostname.to_s + '/')) == 0
+      (url =~ Regexp.new(hostname.to_s + '/')) == 0
     end
 
     #
@@ -95,9 +94,9 @@ module Sites
       return unless url
 
       # no reaction if +@hostname+ was not changed after redirect
-      return if (new_url = Addressable::URI.parse(url).host) == @hostname
+      return if (new_url = Addressable::URI.parse(url).host) == hostname
 
-      MessageWarn.send "Redirected: address '#{@hostname}' has been changed to '#{new_url}'"
+      MessageWarn.send "Redirected: address '#{hostname}' has been changed to '#{new_url}'"
       @hostname = new_url
     end
   end # classTTWatcher::Sites::Site

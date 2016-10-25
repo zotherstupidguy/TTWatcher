@@ -16,8 +16,6 @@ module Sites
   #
   class TorrentSite < Site
     #
-    # <<USER ENDPOINT>>
-    #
     # it tries to found specific torrent.
     #
     # input: +name+   [string] torrent name
@@ -27,7 +25,7 @@ module Sites
     #
     # note: minimal length for +name+ is 2. <no reason to search short words like 'aa'>
     #
-    def find_torrent(name); TorrentList.new; end # +absract+
+    def find_torrent(name); TorrentList.new; end # +abstract+
 
     private
 

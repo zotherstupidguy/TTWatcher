@@ -41,7 +41,6 @@ module InternetConnection
     #
     # changes scheme
     #
-    #
     # schemes ==> [ 'https', 'http']
     #
     # raise an exception if user need another scheme.
@@ -74,7 +73,7 @@ module InternetConnection
     def encode_url
       uri =  Addressable::URI.parse(@url)
       uri.query_values = query_normalization
-      @url.replace uri.normalize.to_s
+      @url.replace uri.normalize.to_s.force_encoding(@encoding)
     end
   end # # class TTWatcher::InternetConnection::Url
 end # module TTWatcher::InternetConnection

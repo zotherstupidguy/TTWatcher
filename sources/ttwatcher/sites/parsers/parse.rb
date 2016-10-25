@@ -14,6 +14,7 @@ module Parsers
     def initialize(site, settings = {})
       @assigned_site = site
       @settings = settings
+      @encoding = settings[:encoding] || Encoding::UTF_8.to_s
     end
 
     #
@@ -32,75 +33,5 @@ module Parsers
     attr_reader :assigned_site
     attr_reader :settings
   end # class TTWatcher::Parsers::AbstractParser
-
-  # ----------------------------------------------------
-
-  #
-  # Most sites (like +rutor+) can be parsed with very same algorithm
-  #
-  # Do not forget overload next methods: +extract_torrents+
-  #                                      +goto_next_page+
-  #
-  class SimpleParser < AbstractParser
-    #
-    # input: page   [core]     [string]
-    #
-    # output: if <ok>    : TorrentList object with torrents.
-    #                      Can be empty if nothing was found
-    #
-    #         if <error> : nil
-    #
-    def parse(page)
-      return nil if page.is_a? NilClass
-      @page = page
-      torrents = TorrentList.new
-      until page.empty?
-        if (extracted = extract_torrents).nil?
-          msg = "+extract_torrents+ method in #{self.class} parser return +nil+"
-          MessageError.send msg
-        else
-          torrents << extracted
-        end
-        break if goto_next_page.empty?
-      end
-      torrents
-    rescue Exception => e # IT IS SO BAD. DO NOT /rescue Exception/
-                          # <<important>> i do understand what i do.
-      msg = "Unknown exception has been raised: '#{e.message}' for '#{self.class}' parser."
-      MessageError.send msg
-      warn msg, '- -' * 20, e.backtrace.join("\n")
-      return nil
-    end
-
-    private
-
-    attr_reader :page, :structure
-
-    #
-    # parsed +@page+
-    #
-    def structure
-      Nokogiri::HTML(page, nil, Encoding::UTF_8.to_s)
-    end
-
-    #
-    # output: if <ok>    : TorrentList instance (can be empty thought)
-    #         if <error> : nil
-    #
-    def extract_torrents; TorrentList.new; end # +abstract+
-
-    #
-    # output: if <ok> : changes +@page+ with new content (unparsed html). If
-    #                   there no new content it should return empty string.
-    #
-    def goto_next_page; @page = ''; end # +abstract+
-  end # class TTWatcher::Parsers::SimpleParser
-
-  # ----------------------------------------------------
-
-  #
-  # This is an +abstract class+ for parsers that needs specific algorithm for parsing
-  #
-  class SpecialParser < AbstractParser; end
 end # module TTWatcher::Parsers
 end # module TTWatcher

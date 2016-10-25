@@ -3,16 +3,15 @@
 module TTWatcher
 module Sites
   #
-  # Class that describes basic information about sites
-  #
   # Do not forget overload next methods: [optional] +connection_settings+
   #
   class Site
-    attr_reader :hostname # <site name>
+    attr_reader   :hostname   # <site name>
+    attr_accessor :connection
 
     def initialize(name)
       @hostname = name
-      @connection ||= TTWatcher::Connection.new(connection_settings)
+      @connection ||= TTWatcher::Connection.new(default_connection_settings)
       @parser = parser
     end
 
@@ -49,9 +48,9 @@ module Sites
     # Set separate connection for each +Site+ instance.
     # Good if we want use proxies/multithreading somewhere in future.
     #
-    def download(url)
+    def download(url, settings = {})
       url = address(url) unless site_name_included?(url)
-      answer = @connection.download_page(url)
+      answer = @connection.download_page(url, settings)
       answer_analysis(answer)
     end
 
@@ -60,7 +59,7 @@ module Sites
     #
     # set specific connection settings (like scheme) if need.
     #
-    def connection_settings; {} end # +abstract+
+    def default_connection_settings; {} end # +abstract+
 
     #
     # output: <true>  if url includes site name

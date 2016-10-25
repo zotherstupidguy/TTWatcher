@@ -2,8 +2,10 @@
 
 module TTWatcher
 module Sites
-  class Rutor < TorrentSite # > ex Rutor.org
+
+  class Megashara < TorrentSite
     include Singleton
+
     #
     # it tries to found specific torrent.
     #
@@ -16,29 +18,32 @@ module Sites
     #
     def find_torrent(name)
       return nil unless torrent_name_valid? name
-      page = download(search_url(name))
+      params = { url: { query_params: { text: name } } }
+
+      page = download(search_url, params)
       @parser.parse page
     end
 
-    private
-
     def initialize
-      super 'rutor.is'
+      super 'megashara.com'
     end
+
+    private
 
     def default_connection_settings
       { url: { force_scheme: :http } }
     end
 
-    def search_url(name)
-      @hostname + SEARCH_ROOT % name
+
+    def search_url
+      @hostname + SEARCH_ROOT
     end
 
     def parser
-      Parsers::Rutor.new self
+      Parsers::Megashara.new self
     end
 
     SEARCH_ROOT = '/search/%s'.freeze # note: '%s' used for later interpolation
-  end # classTT Watcher::Sites::RutorIs
+  end # class TTWatcher::Sites::Megashara
 end # module TTWatcher::Sites
 end # module TTWatcher

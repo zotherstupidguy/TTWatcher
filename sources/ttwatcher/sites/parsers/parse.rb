@@ -52,17 +52,16 @@ module Parsers
     #
     def parse(page)
       return nil if page.is_a? NilClass
-
-      @page, @structure = page, Nokogiri::HTML(page)
+      @page = page
       torrents = TorrentList.new
-      until current_page.empty?
+      until page.empty?
         if (extracted = extract_torrents).nil?
           msg = "+extract_torrents+ method in #{self.class} parser return +nil+"
           MessageError.send msg
         else
           torrents << extracted
         end
-        goto_next_page
+        break if goto_next_page.empty?
       end
       torrents
     rescue Exception => e # IT IS SO BAD. DO NOT /rescue Exception/
@@ -77,8 +76,11 @@ module Parsers
 
     attr_reader :page, :structure
 
-    def current_page
-      @page
+    #
+    # parsed +@page+
+    #
+    def structure
+      Nokogiri::HTML(page, nil, Encoding::UTF_8.to_s)
     end
 
     #

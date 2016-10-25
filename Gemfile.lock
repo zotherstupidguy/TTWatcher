@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.4.0)
+    deep_merge (1.1.1)
     domain_name (0.5.20160826)
       unf (>= 0.0.5, < 1.0.0)
     http-cookie (1.0.3)
@@ -26,6 +27,7 @@ PLATFORMS
 
 DEPENDENCIES
   addressable (~> 2.4.0)
+  deep_merge (~> 1.1.1)
   nokogiri (~> 1.6.8)
   rest-client (~> 2.0.0)
 

@@ -11,8 +11,8 @@ module Sites
   #
   # note:
   #
-  # Do not forget overload next methods: +parser+
-  #                                      +search_url+
+  # Do not forget overload next methods: +find_torrent+
+  #                                      +parser+
   #
   class TorrentSite < Site
     #
@@ -27,11 +27,7 @@ module Sites
     #
     # note: minimal length for +name+ is 2. <no reason to search short words like 'aa'>
     #
-    def find_torrent(name)
-      return nil if name.nil? || name.length <= 2
-      page = download(search_url(name))
-      @parser.parse page
-    end
+    def find_torrent(name); TorrentList.new; end # +absract+
 
     private
 
@@ -41,9 +37,12 @@ module Sites
     def parser; end # +abstract+
 
     #
-    # override with specific search url
+    # do not search torrents with too short name.
+    # uses in +find_torrent+ method
     #
-    def search_url(name) end # +abstract+
+    def torrent_name_valid?(name)
+      !(name.nil? || name.length <= 2)
+    end
   end # class TTWatcher::Sites::TorrentSite
 end # module TTWatcher::Sites
 end # module TTWatcher

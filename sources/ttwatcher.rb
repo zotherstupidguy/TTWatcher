@@ -12,6 +12,7 @@ module TTWatcher
   require "addressable/uri"
   require 'nokogiri'
   require 'rest-client'
+  require 'deep_merge'
 
   # project structure
 
@@ -24,20 +25,19 @@ module TTWatcher
   require_relative 'ttwatcher/sites/parsers/parse'
   require_relative 'ttwatcher/sites/parsers/rutor_parser'
   require_relative 'ttwatcher/sites/parsers/rutracker_parser'
-  require_relative 'ttwatcher/sites/parsers/tfile_parser'
+  require_relative 'ttwatcher/sites/parsers/megashara_parser'
 
   require_relative 'ttwatcher/sites/site'
   require_relative 'ttwatcher/sites/torrent_site'
   require_relative 'ttwatcher/sites/rutor'
-  require_relative 'ttwatcher/sites/tfile'
+  require_relative 'ttwatcher/sites/megashara'
   require_relative 'ttwatcher/sites/rutracker'
   require_relative 'ttwatcher/sites'
 
   require_relative 'ttwatcher/torrent_agent'
 
   def self.start
-    torrents = TorrentAgent.find 'кот'
-#    puts Sites::LIST
+    torrents = TorrentAgent.find 'В поисках Дори '
     if torrents
      torrents.each do |t|
        puts t.name
@@ -47,8 +47,9 @@ module TTWatcher
        puts '-------------'
      end
     end
-
   end
 end # module TTWatcher
 
 TTWatcher.start
+
+

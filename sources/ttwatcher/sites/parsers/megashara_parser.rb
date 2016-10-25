@@ -2,8 +2,9 @@
 
 module TTWatcher
 module Parsers
-  class Rutor < SimpleParser
+  class Megashara < SimpleParser
     private
+
     #
     # output: if <ok>    : TorrentList instance (can be empty thought)
     #         if <error> : nil
@@ -19,7 +20,7 @@ module Parsers
 
     #
     # output: if <ok> : changes +@page+ with new content (unparsed html). If
-    #                   there no new content just return empty string.
+    #                   there no new content it should return empty string.
     #
     def goto_next_page
       if new_pages_list.count > 0
@@ -30,31 +31,35 @@ module Parsers
       end
     end
 
+    def torrents_unparsed
+      structure.css('table[@class="table-wide"]').css('table').css('tr')
+    end
+
     #
     # output: if <ok> : returns list of urls that needs to been parsed.
     #
     def new_pages_list
       return @links if @links_list_loaded
       @links_list_loaded = true
-      @links = structure.xpath('b').first.xpath('a').map do |node|
-        node.attribute('href').to_s
+
+      unparsed_html_data = structure.css('table[@class="pagination-table"]')
+                                    .xpath('tr')
+                                    .xpath('td')[-2]
+      return @links = [] if unparsed_html_data.nil?
+
+      pages_count = unparsed_html_data.css('a').text.to_i - 1
+      link_template = unparsed_html_data.css('a').attr('href').to_s
+
+      @links = []
+      (1..pages_count).each do |i|
+        @links << link_template.gsub(/(\d+)$/, i.to_s)
       end
+      @links
     end
 
+    # input:  +node+ : Nokogiri::Node
     #
-    # +Rutor+ placed all data that we need in one place.
-    #
-    def structure
-      super.xpath '//div[@id="index"]'
-    end
-
-    def torrents_unparsed
-      structure.css('tr[@class="gai"], tr[@class="tum"]')
-    end
-
-    # input:  +unparsed+ : Nokogiri::Node
-    #
-    # output: +torrent+ instance
+    # output: +hsh+  : Hash (only data  with '++' mark are sent)
     #
     #     ++   hsh[:torrent_name]         ==> ex. "Cats swimming in pool 2016 BDRIP"
     #     --   hsh[:description]          ==> ex. "Hot CATS. Summer 2016"
@@ -62,27 +67,26 @@ module Parsers
     #     ++   hsh[:tracker_name]         ==> ex. "super-cool tracker"
     #     --   hsh[:author]               ==> ex. 'Bit kitty fun'
     #     --   hsh[:added_date]           ==> ex. '2016-06-15'
-    #     --   hsh[:seeders]              ==> ex. 50042
-    #     --   hsh[:leeches]              ==> ex. 1
+    #     ++   hsh[:seeders]              ==> ex. 50042
+    #     ++   hsh[:leeches]              ==> ex. 1
     #     ++   hsh[:torrent_size]         ==> ex. "20000 mb"
     #     ++   hsh[:magnet_link]          ==> ex. "magnet:?xt=urn....................."
-    #     ++   hsh[:direct_download_link] ==> ex. "example.torrent.side/12345/download"
+    #     --   hsh[:direct_download_link] ==> ex. "example.torrent.side/12345/download"
     #
     def extract_torrent(unparsed)
       hsh = Hash.new
 
-      hsh[:short_link]          = unparsed.css('a[@class="downgif"]').attribute('href').to_s
-      hsh[:magnet_link]         = unparsed.css('a')[1].attribute('href').to_s
-      hsh[:url_to_torrent_page] = unparsed.css('a')[2].attribute('href').to_s
-      hsh[:torrent_name]        = unparsed.css('a')[2].text
-      hsh[:torrent_size]        = unparsed.css('td[@align="right"]').text
+      hsh[:torrent_name]        = unparsed.css('td')[1].text
+      hsh[:magnet_link]         = unparsed.css('td').css('a')[1].attr('href')
+      hsh[:url_to_torrent_page] = unparsed.css('td').css('a').attr('href')
+      hsh[:torrent_size]        = unparsed.css('td')[3].text
+      hsh[:seeders]             = unparsed.css('td')[4].text.to_i
+      hsh[:leeches]             = unparsed.css('td')[5].text.to_i
 
-      hsh[:tracker_name]         = assigned_site.address
-      hsh[:direct_download_link] = assigned_site.address(hsh[:short_link])
-      hsh[:url_to_torrent_page]  = assigned_site.address(hsh[:url_to_torrent_page] )
+      hsh[:tracker_name] = assigned_site.address
 
       Torrent.new(hsh)
     end
-  end # class TTWatcher::Parsers::Rutor
+  end # class TTWatcher::Parsers::Rutracker
 end # module TTWatcher::Parsers
 end # module TTWatcher

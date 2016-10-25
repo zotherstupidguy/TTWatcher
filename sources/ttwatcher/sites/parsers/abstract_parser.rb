@@ -3,12 +3,19 @@
 module TTWatcher
 module Parsers
   #
-  # Parent class for any Parser classes
+  # base class for Parsers
   #
   # All you need to see here: abstract method +parse+. it should be somehow
   # implemented in any real parser.
   #
   # note: Do not forget overload next methods: +parse+
+  #
+  # input +site+     [site]
+  #       +settings+ [hash]
+  #
+  # keys mapping for +settings+
+  #
+  #     settings[:encoding] ==> override parser encoding preferences
   #
   class AbstractParser
     def initialize(site, settings = {})

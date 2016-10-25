@@ -14,6 +14,9 @@ module Parsers
     #
     #         if <error> : nil
     #
+    # Do not forget overload next methods: +new_pages_list+
+    #                                      +torrents_unparsed+
+    #                                      +extract_torrent+
     def parse(page)
       return nil if page.is_a? NilClass
       @page = page
@@ -40,8 +43,21 @@ module Parsers
 
     attr_accessor :page, :structure, :encoding
 
+    #
+    # output: list of links that should be scanned for torrents search
+    #
     def new_pages_list; end # +abstract+
 
+    #
+    # output: Nokogiri::Node with all torrents placed on current +@page+
+    #
+    def torrents_unparsed; end # +abstract+
+
+    #
+    # input:  +unparsed+ : Nokogiri::Node
+    # output: +torrent+ instance
+    #
+    def extract_torrent(unparsed); end # +abstract+
 
     #
     # output: if <ok>    : TorrentList instance (can be empty thought)

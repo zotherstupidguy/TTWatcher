@@ -16,7 +16,7 @@ module Parsers
       structure.css('tr[class="tCenter hl-tr "]')
     end
 
-    # input:  +unparsed+ : Nokogiri::Node
+    # input:  +unparsed_data+ : Nokogiri::Node
     #
     # output: +torrent+ instance
     #
@@ -34,22 +34,23 @@ module Parsers
     #     --   hsh[:magnet_link]          ==> ex. "magnet:?xt=urn....................."
     #     ++   hsh[:direct_download_link] ==> ex. "example.torrent.side/12345/download"
     #
-    def extract_torrent(unparsed_torrent)
+    def extract_torrent(unparsed_data)
       hsh = Hash.new
 
-      hsh[:torrent_name] = unparsed_torrent.css('a[@class="genmed2 tLink"]').text
-      hsh[:tracker_name] = assigned_site.address
-      hsh[:author]       = unparsed_torrent.css('td[@class=row1]')[2].text
-      hsh[:torrent_size] = unparsed_torrent.css('a[@class="small tr-dl"]').text
-      hsh[:added_date]   = unparsed_torrent.css('td[@class="row4 small nowrap"]').css('p').text
-      hsh[:seeders]      = unparsed_torrent.css('td[@class="row4 seedmed bold"]').text.to_i
-      hsh[:leeches]      = unparsed_torrent.css('td[@class="row4 leechmed"]').text.to_i
+      hsh[:torrent_name] = unparsed_data.css('a[@class="genmed2 tLink"]').text
+      hsh[:author]       = unparsed_data.css('td[@class=row1]')[2].text
+      hsh[:torrent_size] = unparsed_data.css('a[@class="small tr-dl"]').text
+      hsh[:added_date]   = unparsed_data.css('td[@class="row4 small nowrap"]').css('p').text
+      hsh[:seeders]      = unparsed_data.css('td[@class="row4 seedmed bold"]').text.to_i
+      hsh[:leeches]      = unparsed_data.css('td[@class="row4 leechmed"]').text.to_i
 
-      url = unparsed_torrent.css('a[@class="genmed2 tLink"]').attr('href').to_s
+      url = unparsed_data.css('a[@class="genmed2 tLink"]').attr('href').to_s
       hsh[:url_to_torrent_page] = assigned_site.address(url)
 
-      url = unparsed_torrent.css('a[@class="small tr-dl"]').attr('href').to_s
+      url = unparsed_data.css('a[@class="small tr-dl"]').attr('href').to_s
       hsh[:direct_download_link] = assigned_site.address(url)
+
+      hsh[:tracker_name] = assigned_site.to_s
 
       Torrent.new hsh
     end

@@ -8,10 +8,9 @@ module TorrentAgent
   extend self
 
   #
-  # input: torrent_name [string] torrent name
-  #        sites [array][optional] list of sites where we looking for torrent.
-  #                                by default we are looking everywhere where
-  #                                we can (ex. sites = [ :site1, :site2 ])
+  # input: +torrent_name+ [string]    torrent name, minimal length - 3 chars.
+  #        +sites+ [array][optional]  list of sites where we looking for torrent.
+  #                                   by default it search everywhere
   #
   # output: if <ok>    : TorrentList object with torrents.
   #                      Can be empty if nothing was found
@@ -20,7 +19,6 @@ module TorrentAgent
   #
   def find(torrent_name, sites = [] )
     list = TorrentList.new
-
     site_names = sites.empty? ? Sites.list : sites
     site_names.each do |name|
       site = Sites.get_site_by_name name

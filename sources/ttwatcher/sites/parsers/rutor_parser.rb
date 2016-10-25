@@ -7,20 +7,20 @@ module Parsers
 
     def new_pages_list
       return @links if new_pages_list_loaded?
-      @links = structure.xpath('b').first.xpath('a').map do |node|
+      @links = rutor_structure.xpath('b').first.xpath('a').map do |node|
         node.attribute('href').to_s
       end
     end
 
-    def structure
-      super.xpath '//div[@id="index"]'
-    end
-
     def torrents_unparsed
-      structure.css('tr[@class="gai"], tr[@class="tum"]')
+      rutor_structure.css('tr[@class="gai"], tr[@class="tum"]')
     end
 
-    # input:  +unparsed+ : Nokogiri::Node
+    def rutor_structure
+      structure.xpath '//div[@id="index"]'
+    end
+
+    # input:  +unparsed_data+ : Nokogiri::Node
     #
     # output: +torrent+ instance
     #
@@ -38,16 +38,16 @@ module Parsers
     #     ++   hsh[:magnet_link]          ==> ex. "magnet:?xt=urn....................."
     #     ++   hsh[:direct_download_link] ==> ex. "example.torrent.side/12345/download"
     #
-    def extract_torrent(unparsed)
+    def extract_torrent(unparsed_data)
       hsh = Hash.new
 
-      hsh[:short_link]          = unparsed.css('a[@class="downgif"]').attribute('href').to_s
-      hsh[:magnet_link]         = unparsed.css('a')[1].attribute('href').to_s
-      hsh[:url_to_torrent_page] = unparsed.css('a')[2].attribute('href').to_s
-      hsh[:torrent_name]        = unparsed.css('a')[2].text
-      hsh[:torrent_size]        = unparsed.css('td[@align="right"]').text
+      hsh[:short_link]          = unparsed_data.css('a[@class="downgif"]').attribute('href').to_s
+      hsh[:magnet_link]         = unparsed_data.css('a')[1].attribute('href').to_s
+      hsh[:url_to_torrent_page] = unparsed_data.css('a')[2].attribute('href').to_s
+      hsh[:torrent_name]        = unparsed_data.css('a')[2].text
+      hsh[:torrent_size]        = unparsed_data.css('td[@align="right"]').text
 
-      hsh[:tracker_name]         = assigned_site.address
+      hsh[:tracker_name]         = assigned_site.to_s
       hsh[:direct_download_link] = assigned_site.address(hsh[:short_link])
       hsh[:url_to_torrent_page]  = assigned_site.address(hsh[:url_to_torrent_page] )
 

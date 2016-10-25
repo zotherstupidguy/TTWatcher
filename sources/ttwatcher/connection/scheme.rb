@@ -10,6 +10,26 @@ module InternetConnection
   # scheme not supported.
   #
   module Scheme
+    def self.included?(url, scheme = nil)
+      if scheme
+        (url =~ Regexp.new(scheme.to_s << '://')) == 0
+      else
+        SCHEMES.any? { |p| included?(url, p) }
+      end
+    end
+
+    def self.add_scheme!(url, scheme)
+      if included?(url, scheme)
+        url
+      else
+        url.replace "#{scheme.to_s}://#{url}"
+      end
+    end
+
+    def scheme
+      @scheme
+    end
+
     def scheme_switch
       @allowed_schemes -= [ @scheme ]
       if @allowed_schemes.length > 0
@@ -24,8 +44,6 @@ module InternetConnection
 
     private
 
-    attr_accessor :first_load
-
     SCHEMES = [ :https, :http ]
     DEFAULT   = SCHEMES.first
 
@@ -39,29 +57,17 @@ module InternetConnection
 
     def normalization!
       unless @switched
-        return encode_url if scheme_included? :any
+        return encode_url if Scheme.included?(@url)
       end
-      return encode_url if scheme_included? @scheme
+      return encode_url if Scheme.included?(@url, @scheme)
 
       strip_schemes_from_url!
-      add_actual_scheme!
+      Scheme.add_scheme!(@url, @scheme)
     end
 
     def strip_schemes_from_url!
-      SCHEMES.each do |protocol|
-        @url.gsub!(protocol.to_s << '://', '') if scheme_included? protocol
-      end
-    end
-
-    def add_actual_scheme!
-      @url.replace "#{@scheme.to_s}://#{@url}"
-    end
-
-    def scheme_included?(protocol)
-      if protocol == :any
-        SCHEMES.any? { |p| scheme_included? p }
-      else
-        (@url =~ Regexp.new(protocol.to_s << '://')) == 0
+      SCHEMES.each do |scheme|
+        @url.gsub!(scheme.to_s << '://', '') if Scheme.included?(@url, scheme)
       end
     end
   end # module ::InternetConnection::Scheme

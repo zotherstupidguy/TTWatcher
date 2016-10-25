@@ -17,7 +17,7 @@ module Sites
     #
     # <<USER ENDPOINT>>
     #
-    #  Shows site name
+    #  Show site name
     #
     def to_s
       hostname
@@ -26,19 +26,23 @@ module Sites
     #
     # <<USER ENDPOINT>>
     #
-    # generates part of url that includes site name + path
+    # generates url that includes scheme + site name + +path+ (optional)
     #
-    # example: input  ==> @root = "some.site.com", path = 'hello/world'
-    #          output ==> "some.site.com/hello/world"
+    # example: input  ==> @hostname = "some.site.com", path = 'hello/world'
+    #          output ==> "http://some.site.com/hello/world"
     #
-    # if path not selected it returns +@root+
+    # if path not selected it returns scheme + +@hostname+
     #
     def address(path='')
-      return hostname if path.nil? || path.empty?
-      return path if site_name_included?(path)
-
-      path = '/' + path unless path[0] == '/'
-      hostname + path
+      scheme = connection.last_used_url.scheme
+      if !path.empty? && site_name_included?(path)
+        InternetConnection::Scheme.add_scheme!(path, scheme)
+      else
+        hn = hostname.dup # prevent unnecessary +hostname+ mutation
+        InternetConnection::Scheme.add_scheme!(hn, scheme)
+        path = '/' + path unless path[0] == '/'
+        hn + path
+      end
     end
 
     #

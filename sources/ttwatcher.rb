@@ -22,7 +22,7 @@ module TTWatcher
   require_relative 'ttwatcher/connection'
   require_relative 'ttwatcher/torrent'
 
-  require_relative 'ttwatcher/sites/parsers/parse'
+  require_relative 'ttwatcher/sites/parsers/abstract_parser'
   require_relative 'ttwatcher/sites/parsers/simple_parser'
 
   require_relative 'ttwatcher/sites/parsers/rutor_parser'
@@ -39,7 +39,10 @@ module TTWatcher
   require_relative 'ttwatcher/torrent_agent'
 
   def self.start
-    torrents = TorrentAgent.find 'дракон'
+    torrents = TorrentAgent.find 'леопольд'
+
+    puts torrents.count
+
     if torrents
      torrents.each do |t|
        puts t.name

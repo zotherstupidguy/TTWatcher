@@ -71,7 +71,7 @@ module InternetConnection
     # note: << DO NOT TRUST IN +URI.decode+ >> (default lib)
     #
     def encode_url
-      uri =  Addressable::URI.parse(@url)
+      uri = Addressable::URI.parse(@url)
       uri.query_values = query_normalization
       @url.replace uri.normalize.to_s.force_encoding(@encoding)
     end

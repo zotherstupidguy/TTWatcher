@@ -27,7 +27,7 @@ module Parsers
       structure.css('table[@class="table-wide"]').css('table').css('tr')
     end
 
-    # input:  +unparsed+ : Nokogiri::Node
+    # input:  +unparsed_data+ : Nokogiri::Node
     #
     # output: +torrent+ instance
     #
@@ -45,17 +45,17 @@ module Parsers
     #     ++   hsh[:magnet_link]          ==> ex. "magnet:?xt=urn....................."
     #     --   hsh[:direct_download_link] ==> ex. "example.torrent.side/12345/download"
     #
-    def extract_torrent(unparsed)
+    def extract_torrent(unparsed_data)
       hsh = Hash.new
 
-      hsh[:torrent_name]        = unparsed.css('td')[1].text
-      hsh[:magnet_link]         = unparsed.css('td').css('a')[1].attr('href')
-      hsh[:url_to_torrent_page] = unparsed.css('td').css('a').attr('href')
-      hsh[:torrent_size]        = unparsed.css('td')[3].text
-      hsh[:seeders]             = unparsed.css('td')[4].text.to_i
-      hsh[:leeches]             = unparsed.css('td')[5].text.to_i
+      hsh[:torrent_name]        = unparsed_data.css('td')[1].text
+      hsh[:magnet_link]         = unparsed_data.css('td').css('a')[1].attr('href')
+      hsh[:url_to_torrent_page] = unparsed_data.css('td').css('a').attr('href')
+      hsh[:torrent_size]        = unparsed_data.css('td')[3].text
+      hsh[:seeders]             = unparsed_data.css('td')[4].text.to_i
+      hsh[:leeches]             = unparsed_data.css('td')[5].text.to_i
 
-      hsh[:tracker_name] = assigned_site.address
+      hsh[:tracker_name] = assigned_site.to_s
 
       Torrent.new(hsh)
     end

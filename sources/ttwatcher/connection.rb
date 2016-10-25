@@ -7,16 +7,14 @@ module TTWatcher
   class Connection
     include InternetConnection
 
+    attr_reader :last_used_url
+
     #
     # input: redirect_allowed => true
     #        params [hash][optional] hash with optional params
     #
     def initialize(params = {})
       default_settings params
-    end
-
-    def deep_merge(a, b)
-      a.merge! b {}
     end
 
     #
@@ -29,12 +27,12 @@ module TTWatcher
     #
     def download_page(text, settings = {})
       local_settings = default_settings.deep_merge(settings)
-      url = Url.new(text, local_settings[:url] )
-      @responce = client.execute(method: :get, url: url.to_s, max_redirects: 0)
+      @last_used_url = Url.new(text, local_settings[:url] )
+      @responce = client.execute(method: :get, url: last_used_url.to_s, max_redirects: 0)
       return responce_analysis
 
     rescue Errno::ECONNREFUSED # ==> Scheme not supported. Try another one.
-      url.scheme_switch
+      last_used_url.scheme_switch
       retry
 
     rescue RestClient::Found, RestClient::MovedPermanently => exception # ==> add custom reaction for redirect responce
@@ -42,11 +40,11 @@ module TTWatcher
       return responce_analysis
 
     rescue URI::InvalidURIError # ==> bad URI
-      MessageWarn.send "impossible to download from: '#{url.to_s}' (bad URL)."
+      MessageWarn.send "impossible to download from: '#{last_used_url.to_s}' (bad URL)."
       return nil
 
     rescue RestClient::Forbidden
-      MessageWarn.send "Connection for '#{url.to_s}' Forbidden."
+      MessageWarn.send "Connection for '#{last_used_url.to_s}' Forbidden."
       return nil
     end
 
@@ -60,7 +58,7 @@ module TTWatcher
     end
 
     def default_settings(params = {})
-      @settings ||= { :redirect_allowed => true }.merge params
+      @settings ||= { :redirect_allowed => true }.deep_merge params
     end
 
     def responce_analysis

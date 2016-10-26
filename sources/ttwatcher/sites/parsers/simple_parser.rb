@@ -19,23 +19,22 @@ module Parsers
     #                                      +extract_torrent+
     def parse(page)
       return nil if page.is_a? NilClass
-      @page = page
-      torrents = TorrentList.new
-      until page.empty?
+
+      @page, torrents = page, TorrentList.new
+      begin
         if (extracted = extract_torrents).nil?
           msg = "+extract_torrents+ method in #{self.class} parser return +nil+"
           MessageError.send msg
         else
           torrents << extracted
         end
-        break if goto_next_page.empty?
-      end
-      torrents
+      end until goto_next_page.empty?
+      return torrents
     rescue Exception => e # IT IS SO BAD. DO NOT /rescue Exception/
                           # <<important>> i do understand what i do.
       msg = "Unknown exception has been raised: '#{e.message}' for '#{self.class}' parser."
       MessageError.send msg
-      warn msg, '- -' * 20, e.backtrace.join("\n")
+      warn msg, '- -' * 20, e.backtrace.join("\n"), '- -' * 20
       return nil
     end
 

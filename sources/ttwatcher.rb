@@ -37,24 +37,4 @@ module TTWatcher
   require_relative 'ttwatcher/sites'
 
   require_relative 'ttwatcher/torrent_agent'
-
-  def self.start
-    torrents = TorrentAgent.find 'леопольд'
-
-    puts torrents.count
-
-    if torrents
-     torrents.each do |t|
-       puts t.name
-       puts t.url
-       puts t.size
-       puts t.tracker
-       puts '-------------'
-     end
-    end
-  end
 end # module TTWatcher
-
-TTWatcher.start
-
-

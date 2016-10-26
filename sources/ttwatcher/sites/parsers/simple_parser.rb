@@ -3,7 +3,7 @@
 module TTWatcher
 module Parsers
   #
-  # Most sites (like +rutor+) can be parsed with very same algorithm
+  # Most sites (like +rutor+) can be parsed with very simple algorithm
   #
   class SimpleParser < AbstractParser
     #

@@ -30,11 +30,10 @@ module Parsers
         end
       end until goto_next_page.empty?
       return torrents
-    rescue Exception => e # IT IS SO BAD. DO NOT /rescue Exception/
-                          # <<important>> i do understand what i do.
-      msg = "Unknown exception has been raised: '#{e.message}' for '#{self.class}' parser."
-      MessageError.send msg
-      warn msg, '- -' * 20, e.backtrace.join("\n"), '- -' * 20
+    rescue Exception => e # <<IMPORTANT! this will catch __any__ exception. >>
+      msg = "Parser #{self.class} crashed with error: #{e.inspect}"
+      MessageError.send msg;
+      warn msg
       return nil
     end
 

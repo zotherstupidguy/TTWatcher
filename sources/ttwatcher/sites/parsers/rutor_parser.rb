@@ -26,32 +26,32 @@ module Parsers
     #
     # fields mapping for  +rutor+
     #
-    #     ++   hsh[:torrent_name]         ==> ex. "Cats swimming in pool 2016 BDRIP"
-    #     --   hsh[:description]          ==> ex. "Hot CATS. Summer 2016"
-    #     ++   hsh[:url_to_torrent_page]  ==> ex. "example.torrent.side/12345"
-    #     ++   hsh[:tracker_name]         ==> ex. "super-cool tracker"
-    #     --   hsh[:author]               ==> ex. 'Bit kitty fun'
-    #     --   hsh[:added_date]           ==> ex. '2016-06-15'
-    #     --   hsh[:seeders]              ==> ex. 50042
-    #     --   hsh[:leeches]              ==> ex. 1
-    #     ++   hsh[:torrent_size]         ==> ex. "20000 mb"
-    #     ++   hsh[:magnet_link]          ==> ex. "magnet:?xt=urn....................."
-    #     ++   hsh[:direct_download_link] ==> ex. "example.torrent.side/12345/download"
+    #     ++   hsh[:name]             ==> ex. "Cats swimming in pool 2016 BDRIP"
+    #     --   hsh[:description]      ==> ex. "Hot CATS. Summer 2016"
+    #     ++   hsh[:url]              ==> ex. "example.torrent.side/12345"
+    #     ++   hsh[:tracker]          ==> ex. "super-cool tracker"
+    #     --   hsh[:author]           ==> ex. 'Bit kitty fun'
+    #     --   hsh[:added_date]       ==> ex. '2016-06-15'
+    #     --   hsh[:seeders]          ==> ex. 50042
+    #     --   hsh[:leeches]          ==> ex. 1
+    #     ++   hsh[:size]             ==> ex. "20000 mb"
+    #     ++   hsh[:magnet_url]       ==> ex. "magnet:?xt=urn....................."
+    #     ++   hsh[:download_url]     ==> ex. "example.torrent.side/12345/download"
     #
     def extract_torrent(unparsed_data)
       hsh = Hash.new
 
-      hsh[:short_link]          = unparsed_data.css('a[@class="downgif"]').attribute('href').to_s
-      hsh[:magnet_link]         = unparsed_data.css('a')[1].attribute('href').to_s
-      hsh[:url_to_torrent_page] = unparsed_data.css('a')[2].attribute('href').to_s
-      hsh[:torrent_name]        = unparsed_data.css('a')[2].text
-      hsh[:torrent_size]        = unparsed_data.css('td[@align="right"]').text
+      hsh[:short_link]  = unparsed_data.css('a[@class="downgif"]').attribute('href').to_s
+      hsh[:magnet_url]  = unparsed_data.css('a')[1].attribute('href').to_s
+      hsh[:url]         = unparsed_data.css('a')[2].attribute('href').to_s
+      hsh[:name]        = unparsed_data.css('a')[2].text
+      hsh[:size]        = unparsed_data.css('td[@align="right"]').text
 
-      hsh[:tracker_name]         = assigned_site.to_s
-      hsh[:direct_download_link] = assigned_site.address(hsh[:short_link])
-      hsh[:url_to_torrent_page]  = assigned_site.address(hsh[:url_to_torrent_page] )
+      hsh[:tracker]      = assigned_site.to_s
+      hsh[:download_url] = assigned_site.address(hsh[:short_link])
+      hsh[:url]          = assigned_site.address(hsh[:url] )
 
-      Torrent.new(hsh)
+      Torrent.build hsh
     end
   end # class TTWatcher::Parsers::Rutor
 end # module TTWatcher::Parsers

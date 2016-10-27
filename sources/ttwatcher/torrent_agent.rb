@@ -22,7 +22,8 @@ module TorrentAgent
     site_names = sites.empty? ? Sites.list : sites
     site_names.each do |name|
       site = Sites.get_site_by_name name
-      list += site.find_torrent(torrent_name)
+      new_torrents = site.find_torrent(torrent_name)
+      list += new_torrents if new_torrents
     end
     list
   end

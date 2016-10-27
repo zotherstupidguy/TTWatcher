@@ -36,7 +36,7 @@ module Sites
     private
 
     #
-    # override with specific parser
+    # override it with specific parser
     #
     def parser; end # +abstract+
 

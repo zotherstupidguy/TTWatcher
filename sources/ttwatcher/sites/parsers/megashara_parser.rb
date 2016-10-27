@@ -33,31 +33,31 @@ module Parsers
     #
     # fields mapping for +megashara+:
     #
-    #     ++   hsh[:torrent_name]         ==> ex. "Cats swimming in pool 2016 BDRIP"
-    #     --   hsh[:description]          ==> ex. "Hot CATS. Summer 2016"
-    #     ++   hsh[:url_to_torrent_page]  ==> ex. "example.torrent.side/12345"
-    #     ++   hsh[:tracker_name]         ==> ex. "super-cool tracker"
-    #     --   hsh[:author]               ==> ex. 'Bit kitty fun'
-    #     --   hsh[:added_date]           ==> ex. '2016-06-15'
-    #     ++   hsh[:seeders]              ==> ex. 50042
-    #     ++   hsh[:leeches]              ==> ex. 1
-    #     ++   hsh[:torrent_size]         ==> ex. "20000 mb"
-    #     ++   hsh[:magnet_link]          ==> ex. "magnet:?xt=urn....................."
-    #     --   hsh[:direct_download_link] ==> ex. "example.torrent.side/12345/download"
+    #     ++   hsh[:name]             ==> ex. "Cats swimming in pool 2016 BDRIP"
+    #     --   hsh[:description]      ==> ex. "Hot CATS. Summer 2016"
+    #     ++   hsh[:url]              ==> ex. "example.torrent.side/12345"
+    #     ++   hsh[:tracker]          ==> ex. "super-cool tracker"
+    #     --   hsh[:author]           ==> ex. 'Bit kitty fun'
+    #     --   hsh[:added_date]       ==> ex. '2016-06-15'
+    #     ++   hsh[:seeders]          ==> ex. 50042
+    #     ++   hsh[:leeches]          ==> ex. 1
+    #     ++   hsh[:size]             ==> ex. "20000 mb"
+    #     ++   hsh[:magnet_url]       ==> ex. "magnet:?xt=urn....................."
+    #     --   hsh[:download_url]     ==> ex. "example.torrent.side/12345/download"
     #
     def extract_torrent(unparsed_data)
       hsh = Hash.new
 
-      hsh[:torrent_name]        = unparsed_data.css('td')[1].text
-      hsh[:magnet_link]         = unparsed_data.css('td').css('a')[1].attr('href')
-      hsh[:url_to_torrent_page] = unparsed_data.css('td').css('a').attr('href')
-      hsh[:torrent_size]        = unparsed_data.css('td')[3].text
-      hsh[:seeders]             = unparsed_data.css('td')[4].text.to_i
-      hsh[:leeches]             = unparsed_data.css('td')[5].text.to_i
+      hsh[:name]        = unparsed_data.css('td')[1].text
+      hsh[:magnet_url]  = unparsed_data.css('td').css('a')[1].attr('href')
+      hsh[:url]         = unparsed_data.css('td').css('a').attr('href')
+      hsh[:size]        = unparsed_data.css('td')[3].text
+      hsh[:seeders]     = unparsed_data.css('td')[4].text.to_i
+      hsh[:leeches]     = unparsed_data.css('td')[5].text.to_i
 
-      hsh[:tracker_name] = assigned_site.to_s
+      hsh[:tracker] = assigned_site.to_s
 
-      Torrent.new(hsh)
+      Torrent.build hsh
     end
   end # class TTWatcher::Parsers::Megashara
 end # module TTWatcher::Parsers

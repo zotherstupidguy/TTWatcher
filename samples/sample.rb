@@ -22,8 +22,8 @@ torrents.each do |t|
   puts "size:         #{t.size}" if t.size
   puts "author:       #{t.author}" if t.author
   puts "added_date:   #{t.added_date}" if t.added_date
-  puts "seeders:      #{t.seeders}" if t.seeders > 0
-  puts "leeches:      #{t.leeches}" if t.leeches > 0
+  puts "seeders:      #{t.seeders}" if t.seeders
+  puts "leeches:      #{t.leeches}" if t.leeches
   puts "magnet_url:   #{t.magnet_url}" if t.magnet_url
   puts "download_url: #{t.download_url}" if t.download_url
   puts "torrent_page: #{t.torrent_page}" if t.torrent_page

@@ -28,12 +28,16 @@ module TTWatcher
   require_relative 'ttwatcher/sites/parsers/rutor_parser'
   require_relative 'ttwatcher/sites/parsers/megashara_parser'
   require_relative 'ttwatcher/sites/parsers/unionpeer_parser'
+  require_relative 'ttwatcher/sites/parsers/zooqle_parser'
 
   require_relative 'ttwatcher/sites/site'
   require_relative 'ttwatcher/sites/torrent_site'
+
   require_relative 'ttwatcher/sites/rutor'
   require_relative 'ttwatcher/sites/megashara'
   require_relative 'ttwatcher/sites/unionpeer'
+  require_relative 'ttwatcher/sites/zooqle'
+
   require_relative 'ttwatcher/sites'
 
   require_relative 'ttwatcher/torrent_agent'

@@ -27,8 +27,8 @@ module Sites
       @parser ||= Parsers::Unionpeer.new(self, encoding: ENCODING)
     end
 
-    ENCODING    = Encoding::Windows_1251.to_s
-    SEARCH_ROOT = '/tracker.php'
+    ENCODING    = Encoding::Windows_1251.to_s.freeze
+    SEARCH_ROOT = '/tracker.php'.freeze
   end # class TTWatcher::Sites::Unionpeer
 end # module TTWatcher::Sites
 end # module TTWatcher

@@ -10,6 +10,7 @@ module Parsers
       @links = structure.css('p[@class="small"]').css('a').map do |node|
         node.attr('href')
       end.slice!(1..-2) || []
+      @links
     end
 
     def torrents_unparsed

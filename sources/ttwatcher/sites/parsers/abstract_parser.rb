@@ -8,8 +8,6 @@ module Parsers
   # All you need to see here: abstract method +parse+. it should be somehow
   # implemented in any real parser.
   #
-  # note: do not forget overload next methods: +parse+
-  #
   class AbstractParser
     #
     # input +site+     [site]
@@ -31,9 +29,7 @@ module Parsers
     #
     #         if <error> : nil
     #
-    def parse(page, **params); nil end # +abstract+
-
-    private
+    abstract_method '**params', :parse
 
     #
     # +assigned_site+ provide sensitive information that parser actually need

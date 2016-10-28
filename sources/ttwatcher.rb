@@ -13,6 +13,7 @@ module TTWatcher
   require 'nokogiri'
   require 'rest-client'
   require 'deep_merge'
+  require 'abstract'
 
   # project structure
 

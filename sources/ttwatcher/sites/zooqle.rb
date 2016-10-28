@@ -15,12 +15,10 @@ module Sites
       super 'zooqle.com'
     end
 
+    def default_connection_settings; {} end
+
     def search_url(name=nil)
       hostname + SEARCH_ROOT
-    end
-
-    def parser
-      @parser ||= Parsers::Zooqle.new(self)
     end
 
     SEARCH_ROOT = '/search'.freeze

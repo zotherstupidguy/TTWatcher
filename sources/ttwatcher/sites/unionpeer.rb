@@ -24,7 +24,7 @@ module Sites
     end
 
     def parser
-      @parser ||= Parsers::Unionpeer.new(self, encoding: ENCODING)
+      super encoding: ENCODING
     end
 
     ENCODING    = Encoding::Windows_1251.to_s.freeze

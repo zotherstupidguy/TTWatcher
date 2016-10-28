@@ -2,11 +2,8 @@
 
 module TTWatcher
 module Sites
-  #
-  # Do not forget overload next methods: [optional] +connection_settings+
-  #
   class Site
-    attr_reader   :hostname   # <site name>
+    attr_reader   :hostname
     attr_accessor :connection
 
     def initialize(name)
@@ -17,7 +14,7 @@ module Sites
     #
     # <<USER ENDPOINT>>
     #
-    #  Show site name
+    # Shows site hostname
     #
     def to_s
       hostname
@@ -60,10 +57,19 @@ module Sites
     private
 
     #
-    # set specific connection settings (like scheme) if need.
+    # output: HASH with connection settings
     #
-    def default_connection_settings; {} end # +abstract+
+    # list of all key/value pairs that method +default_connection_settings+
+    # _can_ return:
+    #
+    #     output[:url][:force_scheme] ==> :http or :https
+    #     output[:url][:encoding]     ==>  Encoding::UTF8
+    #
+    # By default it should return empty hash
+    #
+    abstract_method :default_connection_settings
 
+    # <Helper>
     #
     # output: <true>  if url includes site name
     #         <false> otherwise
@@ -71,6 +77,10 @@ module Sites
     def site_name_included?(url)
       (url =~ Regexp.new(hostname.to_s + '/')) == 0
     end
+
+    #
+    # ------------------ DO NOT OVERLOAD -------------------
+    #
 
     #
     # In normal state it just return same thing that +download_page+ method

@@ -14,22 +14,15 @@ module Parsers
     #
     #         if <error> : nil
     #
-    # Do not forget overload next methods: +new_pages_list+
-    #                                      +torrents_unparsed+
-    #                                      +extract_torrent+
     def parse(page)
       return nil if page.is_a? NilClass
 
       @page, torrents = page, TorrentList.new
-      begin
-        if (extracted = extract_torrents).nil?
-          msg = "+extract_torrents+ method in #{self.class} parser return +nil+"
-          MessageError.send msg
-        else
-          torrents << extracted
-        end
-      end until goto_next_page.empty?
-      return torrents
+      loop do
+        torrents << extract_torrents_from_page
+        break if next_page.empty?
+      end
+      torrents
     rescue Exception => exception # <<IMPORTANT! this will catch __any__ exception. >>
       notificate_about_parser_crash! exception
       return nil
@@ -39,24 +32,24 @@ module Parsers
 
     attr_accessor :page, :structure, :encoding
 
-    # -------------- PRIVATE CAN BE OVERLOAD ---------------
+    # ------------ PRIVATE BUT CAN BE OVERLOAD -------------
 
     #
     # output: list of links that should be scanned for full torrents extract
     #
-    def new_pages_list; end # +abstract+
+    abstract_method :new_pages_list
 
     #
     # output: homogeneous array of Nokogiri::Nodes. Each element from array
     # should have all available information about _1_ torrent.
     #
-    def torrents_unparsed; end # +abstract+
+    abstract_method :torrents_unparsed
 
     #
-    # input:  +unparsed+ : Nokogiri::Node
+    # input:  +unparsed_data+ : Nokogiri::Node
     # output: +torrent+ instance
     #
-    def extract_torrent(unparsed); end # +abstract+
+    abstract_method 'unparsed_data', :extract_torrent
 
     #
     # note: designed to use with +new_pages_list+ method.
@@ -80,9 +73,8 @@ module Parsers
 
     #
     # output: if <ok>    : TorrentList instance (can be empty thought)
-    #         if <error> : nil
     #
-    def extract_torrents
+    def extract_torrents_from_page
       list = TorrentList.new
       torrents_unparsed.each do |unparsed_torrent|
         torrent = extract_torrent(unparsed_torrent)
@@ -95,7 +87,7 @@ module Parsers
     # output: if <ok> : changes +@page+ with new content (unparsed html). If
     #                   there no new content it should return empty string.
     #
-    def goto_next_page
+    def next_page
       if new_pages_list.count > 0
         url = new_pages_list.pop
         @page = assigned_site.download url

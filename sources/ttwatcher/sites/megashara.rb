@@ -23,10 +23,6 @@ module Sites
       @hostname + SEARCH_ROOT
     end
 
-    def parser
-      @parser ||= Parsers::Megashara.new(self)
-    end
-
     SEARCH_ROOT = '/search/%s'.freeze # note: '%s' used for later interpolation
   end # class TTWatcher::Sites::Megashara
 end # module TTWatcher::Sites

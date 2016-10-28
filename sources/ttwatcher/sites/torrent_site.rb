@@ -9,12 +9,6 @@ module Sites
   # I suppose any additional functional should be provided throw new modules,
   # but not sure. Anyway let the adventure begin from this code. Medved.
   #
-  # note:
-  #
-  # Do not forget overload next methods: +find_torrent+
-  #                                      +parser+
-  #                                      +default_connection_settings+ [optional]
-  #                                      +find_torrent+ [optional]
   class TorrentSite < Site
     #
     # it tries to found specific torrent.
@@ -24,27 +18,52 @@ module Sites
     # output: if <ok>    : TorrentList instance (can be empty if nothing was found)
     #         if <error> : nil
     #
-    # note: minimal length for +name+ is 2. <no reason to search short words like 'aa'>
+    # note: minimal length for +name+ is 2 (No reason to search short words
+    # like 'aa')
     #
     def find_torrent(name, params = {})
       return nil unless torrent_name_valid? name
-      params ||= {}
       page = download(search_url(name), params)
-      parser.parse page
+      parser ? parser.parse(page) : nil
     end
 
     private
 
-    #
-    # override it with specific parser
-    #
-    def parser; end # +abstract+
+    # ------------ PRIVATE BUT CAN BE OVERLOAD -------------
 
     #
-    # Do not search torrent if name too short.
+    # override if you want send specific params (HASH) for parser. See
+    # Unionpeer#parser for sample
+    #
+    def parser(params = {})
+      @parser ||=
+        begin
+          class_name = self.class.name.split('::').last
+          parser = TTWatcher::Parsers.const_get(class_name)
+          parser.new self, params
+        end
+    rescue NameError
+      notificate_parser_missed
+      return nil
+    end
+
+    #
+    # ------------------ DO NOT OVERLOAD -------------------
+    #
+
+    #
+    #
+    # output: <true>  if name valid (_not nil_ && _not short_)
+    #         <false> otherwise
     #
     def torrent_name_valid?(name)
       !(name.nil? || name.length <= 2)
+    end
+
+    def notificate_parser_missed
+      msg = "Hey! Medved, you forgot to implement parser for #{self.class} site."
+      MessageError.send msg
+      warn msg
     end
   end # class TTWatcher::Sites::TorrentSite
 end # module TTWatcher::Sites

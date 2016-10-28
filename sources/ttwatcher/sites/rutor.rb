@@ -23,10 +23,6 @@ module Sites
       hostname + SEARCH_ROOT % name
     end
 
-    def parser
-      @parser ||= Parsers::Rutor.new(self)
-    end
-
     SEARCH_ROOT = '/search/%s'.freeze # note: '%s' used for later interpolation
   end # classTT Watcher::Sites::Rutor
 end # module TTWatcher::Sites

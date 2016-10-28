@@ -15,7 +15,7 @@ module TTWatcher
 
       private
 
-      def sub_types
+      def sub_types_mapping
         { :movie   => MovieTorrent,
           :serial  => SerialTorrent,
           :tv      => TVProgramTorrent,
@@ -25,7 +25,7 @@ module TTWatcher
 
     # --------------------INSTANCE ZONE-------------------
 
-    private_class_method :sub_types
+    private_class_method :sub_types_mapping
 
     #
     #

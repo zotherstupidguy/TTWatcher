@@ -7,6 +7,7 @@ module Parsers
 
     def new_pages_list
       return @links if new_pages_list_loaded?
+
       @links = rutor_structure.xpath('b').first.xpath('a').map do |node|
         node.attribute('href').to_s
       end
@@ -24,7 +25,7 @@ module Parsers
     #
     # output: +torrent+ instance
     #
-    # fields mapping for  +rutor+
+    # fields mapping for +rutor+
     #
     #     ++   hsh[:name]             ==> ex. "Cats swimming in pool 2016 BDRIP"
     #     --   hsh[:description]      ==> ex. "Hot CATS. Summer 2016"

@@ -12,13 +12,13 @@ module TTWatcher
 
       private
 
-      def sub_types # todo: add sub-types! <note: if need>
+      def sub_types_mapping # todo: add sub-types! <note: if need>
       end
     end # class << self
 
     # --------------------INSTANCE ZONE-------------------
 
-    private_class_method :sub_types
+    private_class_method :sub_types_mapping
 
     #
     #

@@ -10,7 +10,6 @@ module Parsers
 
       tmp = structure.css('ul[@class="pagination smaller pull-right margin-top-20"]')
                      .css('li')
-
       return @links = [] if tmp.nil? || tmp.empty?
 
       url_part = tmp.css('a').attr('href').to_s.gsub(/pg=\d*/,'pg=+NUMBER+')

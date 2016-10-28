@@ -30,10 +30,8 @@ module Parsers
         end
       end until goto_next_page.empty?
       return torrents
-    rescue Exception => e # <<IMPORTANT! this will catch __any__ exception. >>
-      msg = "Parser #{self.class} crashed with error: #{e.inspect}"
-      MessageError.send msg;
-      warn msg
+    rescue Exception => exception # <<IMPORTANT! this will catch __any__ exception. >>
+      notificate_about_parser_crash! exception
       return nil
     end
 
@@ -41,13 +39,16 @@ module Parsers
 
     attr_accessor :page, :structure, :encoding
 
+    # -------------- PRIVATE CAN BE OVERLOAD ---------------
+
     #
-    # output: list of links that should be scanned for torrents search
+    # output: list of links that should be scanned for full torrents extract
     #
     def new_pages_list; end # +abstract+
 
     #
-    # output: Nokogiri::Node with all torrents placed on current +@page+
+    # output: homogeneous array of Nokogiri::Nodes. Each element from array
+    # should have all available information about _1_ torrent.
     #
     def torrents_unparsed; end # +abstract+
 
@@ -56,6 +57,26 @@ module Parsers
     # output: +torrent+ instance
     #
     def extract_torrent(unparsed); end # +abstract+
+
+    #
+    # note: designed to use with +new_pages_list+ method.
+    #
+    def new_pages_list_loaded?
+      if @new_pages_list_loaded
+        true
+      else
+        @new_pages_list_loaded  = true
+        false
+      end
+    end
+
+    def structure
+      Nokogiri::HTML(page, nil, encoding)
+    end
+
+    #
+    # ------------------ DO NOT OVERLOAD -------------------
+    #
 
     #
     # output: if <ok>    : TorrentList instance (can be empty thought)
@@ -83,21 +104,14 @@ module Parsers
       end
     end
 
-    def new_pages_list_loaded?
-      if @new_pages_list_loaded
-        true
-      else
-        @new_pages_list_loaded  = true
-        false
-      end
-    end
-
-    def structure
-      Nokogiri::HTML(page, nil, encoding)
-    end
-
     def page
       @page.encoding == encoding ? @page : @page.force_encoding(encoding)
+    end
+
+    def notificate_about_parser_crash!(exception)
+      msg = "Parser #{self.class} crashed with error: #{exception.inspect}"
+      MessageError.send msg
+      warn msg
     end
   end # class TTWatcher::Parsers::SimpleParser
 end # module TTWatcher::Parsers

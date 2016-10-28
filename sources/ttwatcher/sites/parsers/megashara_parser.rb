@@ -16,11 +16,9 @@ module Parsers
       pages_count   = unparsed_html_data.css('a').text.to_i - 1
       link_template = unparsed_html_data.css('a').attr('href').to_s
 
-      @links = []
-      (1..pages_count).each do |i|
-        @links << link_template.gsub(/(\d+)$/, i.to_s)
+      @links = (1..pages_count).map do |i|
+        link_template.gsub /(\d+)$/, i.to_s
       end
-      @links
     end
 
     def torrents_unparsed

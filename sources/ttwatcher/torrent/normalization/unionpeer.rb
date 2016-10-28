@@ -2,6 +2,9 @@
 
 module TTWatcher
 module Normalization
+  #
+  #
+  #
   class Unionpeer < AbstractNormalizer
   end # TTWatcher::Normalization::Unionpeer
 end # module TTWatcher::Normalization

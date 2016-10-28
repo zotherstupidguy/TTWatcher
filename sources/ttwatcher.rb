@@ -22,7 +22,7 @@ module TTWatcher
   require_relative 'ttwatcher/torrent/normalization/rutor'
   require_relative 'ttwatcher/torrent/normalization/unionpeer'
   require_relative 'ttwatcher/torrent/normalization/zooqle'
-  require_relative 'ttwatcher/torrent/normalization/normalizations'
+  require_relative 'ttwatcher/torrent/normalization/normalization'
 
   require_relative 'ttwatcher/connection/scheme'
   require_relative 'ttwatcher/connection/url'

@@ -2,6 +2,9 @@
 
 module TTWatcher
 module Normalization
+  #
+  #
+  #
   class Zooqle < AbstractNormalizer
   end # TTWatcher::Normalization::Zooqle
 end # module TTWatcher::Normalization

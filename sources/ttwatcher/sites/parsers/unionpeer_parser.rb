@@ -7,6 +7,7 @@ module Parsers
 
     def new_pages_list
       return @links if new_pages_list_loaded?
+
       @links = structure.css('p[@class="small"]').css('a').map do |node|
         node.attr('href')
       end.slice!(1..-2) || []

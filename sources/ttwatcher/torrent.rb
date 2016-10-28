@@ -43,29 +43,30 @@ module TTWatcher
       end
 
       #
+      # output: hash with keys associated with torrent class. For any key that
+      #         not in list below it returns UnknownTorrent class.
       #
+      # note: @@TORRENT_PRIMARY_TYPES_MAPPING used for caching.
       #
       def torrent_primary_types_mapping
-       { :video   => VideoTorrent,
-         :sound   => SoundTorrent,
-         :soft    => SoftTorrent,
-         :game    => GameTorrent,
-         :book    => BookTorrent,
-         :other   => OtherTorrent,
-         :unknown => UnknownTorrent }
+        @@TORRENT_PRIMARY_TYPES_MAPPING ||=
+          begin
+            tmp = Hash.new { |key, value| key[value] = UnknownTorrent }
+            tmp.merge({ :video   => VideoTorrent,
+                        :sound   => SoundTorrent,
+                        :soft    => SoftTorrent,
+                        :game    => GameTorrent,
+                        :book    => BookTorrent,
+                        :other   => OtherTorrent,
+                        :unknown => UnknownTorrent })
+          end
       end
     end # class < self
 
     # --------------------INSTANCE ZONE-------------------
 
     #
-    #
-    #
-    private_class_method :new
-    private_class_method :normalization!, :determinate_torrent_type!,
-                         :build_torrent, :torrent_primary_types_mapping
-    #
-    #
+    # _any_ torrent instance have this attributes:
     #
     attr_reader :name, :description, :url, :size
     attr_reader :author, :added_date, :seeders, :leeches
@@ -95,10 +96,6 @@ module TTWatcher
     #        params[:size]            ==> ex. "20000 mb"
     #        params[:magnet_url]      ==> ex. "magnet:?xt=urn....................."
     #        params[:download_url]    ==> ex. "example.torrent.side/12345/download"
-    #
-    # note: any input value from list above _can be_ not defined.
-    #
-    # output: Torrent object instance
     #
     def default_initialization(**params)
       %w(name description url tracker author added_date seeders leeches size

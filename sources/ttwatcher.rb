@@ -15,51 +15,43 @@ module TTWatcher
   require 'deep_merge'
   require 'abstract'
 
-  # project structure
+  class << self
+    private
 
-  require_relative 'ttwatcher/torrent/normalization/abstract_normalizer'
-  require_relative 'ttwatcher/torrent/normalization/default'
-  require_relative 'ttwatcher/torrent/normalization/megashara'
-  require_relative 'ttwatcher/torrent/normalization/rutor'
-  require_relative 'ttwatcher/torrent/normalization/unionpeer'
-  require_relative 'ttwatcher/torrent/normalization/zooqle'
-  require_relative 'ttwatcher/torrent/normalization/normalization'
+    def self.load(**params)
+      params[:files].each do |f|
+        require File.join(__dir__, 'ttwatcher', params[:folder].to_s, f)
+      end
+    end
 
-  require_relative 'ttwatcher/connection/scheme'
-  require_relative 'ttwatcher/connection/url'
-  require_relative 'ttwatcher/message'
-  require_relative 'ttwatcher/connection'
-  require_relative 'ttwatcher/torrent'
+    # project structure
 
-  require_relative 'ttwatcher/torrent/torrent_list'
-  require_relative 'ttwatcher/torrent/book'
-  require_relative 'ttwatcher/torrent/game'
-  require_relative 'ttwatcher/torrent/other'
-  require_relative 'ttwatcher/torrent/soft'
-  require_relative 'ttwatcher/torrent/sound'
-  require_relative 'ttwatcher/torrent/unknown'
-  require_relative 'ttwatcher/torrent/video'
-  require_relative 'ttwatcher/torrent/torrents'
+    load folder: 'torrent/normalization',
+         files: %w(abstract_normalizer default megashara rutor unionpeer zooqle normalization)
 
-  require_relative 'ttwatcher/sites/parsers/abstract_parser'
-  require_relative 'ttwatcher/sites/parsers/simple_parser'
+    load folder: 'connection',
+         files: %w(scheme url proxy)
 
-  require_relative 'ttwatcher/sites/parsers/rutor_parser'
-  require_relative 'ttwatcher/sites/parsers/megashara_parser'
-  require_relative 'ttwatcher/sites/parsers/unionpeer_parser'
-  require_relative 'ttwatcher/sites/parsers/zooqle_parser'
+    load files: %w(message connection torrent)
 
-  require_relative 'ttwatcher/sites/site'
-  require_relative 'ttwatcher/sites/torrent_site'
+    load folder: 'torrent',
+         files: %w(torrent_list book game other soft sound unknown video torrents)
 
-  require_relative 'ttwatcher/sites/rutor'
-  require_relative 'ttwatcher/sites/megashara'
-  require_relative 'ttwatcher/sites/unionpeer'
-  require_relative 'ttwatcher/sites/zooqle'
+    load folder: 'sites/parsers',
+         files: %w(abstract_parser simple_parser)
 
-  require_relative 'ttwatcher/sites'
+    load folder: 'sites/parsers',
+         files: %w(rutor_parser megashara_parser unionpeer_parser zooqle_parser)
 
-  require_relative 'ttwatcher/torrent_agent'
+    load folder: 'sites',
+         files: %w(site torrent_site rutor megashara unionpeer zooqle)
 
-  # todo: write simple autoload/dependency manager
+    load files: %w(sites torrent_agent)
+  end # class << self
+
+  # --------------------INSTANCE ZONE-------------------
+
+  #
+  # TODO: add public interface and description
+  #
 end # module TTWatcher

@@ -4,10 +4,10 @@ module TTWatcher
   module Sites
 
     TORRENT_LIST_MAPPING = {
-  #    :megashara => Megashara.instance,
+      :megashara => Megashara.instance,
       :rutor     => Rutor.instance,
- #     :unionpeer => Unionpeer.instance,
-#      :zooqle    => Zooqle.instance
+      :unionpeer => Unionpeer.instance,
+      :zooqle    => Zooqle.instance
     }
 
     #

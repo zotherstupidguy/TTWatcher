@@ -2,9 +2,9 @@
 
 require_relative '../sources/ttwatcher'
 
-search_text = 'алиса'
+search_text = 'учебник'
 
-torrents = TTWatcher::TorrentAgent.find search_text
+torrents = TTWatcher.find search_text
 
 puts '-----' * 20
 puts "search phrase:  #{search_text}"
@@ -31,5 +31,3 @@ torrents.each do |t|
   puts "tracker:      #{t.tracker}"      if t.tracker
   puts '-----' * 20
 end
-
-

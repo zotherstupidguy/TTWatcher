@@ -3,7 +3,8 @@
 module TTWatcher
 module Torrents
   #
-  #
+  # +BookModule+ module provides specific attributes and methods for torrent
+  # instance.
   #
   module BookModule
   end # class TTWatcher::Torrents::BookModule

@@ -3,7 +3,8 @@
 module TTWatcher
 module Torrents
   #
-  #
+  # +VideoModule+ module provides specific attributes and methods for torrent
+  # instance.
   #
   module VideoModule
   end # class TTWatcher::Torrents::VideoModule

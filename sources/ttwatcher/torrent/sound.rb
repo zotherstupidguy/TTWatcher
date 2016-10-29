@@ -3,7 +3,8 @@
 module TTWatcher
 module Torrents
   #
-  #
+  # +SoundModule+ module provides specific attributes and methods for torrent
+  # instance.
   #
   module SoundModule
   end # class TTWatcher::Torrents::SoundModule

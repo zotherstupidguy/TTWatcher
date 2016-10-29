@@ -7,6 +7,15 @@ module Normalization
   #
   #
   module Helpers
+    #
+    #
+    #
+    def load_formats
+      return @json_format_helper if @json_format_helper
+      f = File.open(File.join(__dir__, 'formats.json'), 'r')
+      (data = f.read) && (f.close)
+      @json_format_helper = JSON.parse data
+    end
 
     #
     #

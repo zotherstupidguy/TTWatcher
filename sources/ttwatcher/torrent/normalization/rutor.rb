@@ -3,6 +3,7 @@
 module TTWatcher
 module Torrents
 module Normalization
+
   #
   #
   #
@@ -31,16 +32,16 @@ module Normalization
         return @rutor_formats unless @rutor_formats.is_a? NilClass
         @rutor_formats = Hash.new {|hash, key| hash[key] = :unknown }
 
-        f = File.open(File.join(__dir__, 'formats.json'), 'r')
-        js = JSON.parse(f.read)
-        js['rutor'].each_pair do |key, values|
+        load_formats['rutor'].each_pair do |key, values|
           values.each { |v| @rutor_formats[v.to_sym] = key.to_sym }
         end
         @rutor_formats
       end
 
       #
-      # format: %text% [/ %text2%] [%optional_param%] (%year%) %category_type% [%optional_param%]
+      # params[:name] format:
+      #
+      # >>> %name% [/ %second_name%] [%optional_param%] (%year%) %category_type% [%optional_param2%]
       #
       def mutate_name!(params)
         params[:extra] ||= {}
@@ -59,6 +60,7 @@ module Normalization
 
         params[:name]                   = name
         params[:extra][:type]           = rutor_formats[type_mask]
+        params[:extra][:subtype]        = type_mask
         params[:extra][:optional_param] = optional_param
         params[:extra][:second_name]    = second_name
       end

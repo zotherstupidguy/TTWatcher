@@ -3,7 +3,8 @@
 module TTWatcher
 module Torrents
   #
-  #
+  # +UnknownModule+ module provides specific attributes and methods for torrent
+  # instance.
   #
   module UnknownModule
   end # class TTWatcher::Torrents::UnknownModule

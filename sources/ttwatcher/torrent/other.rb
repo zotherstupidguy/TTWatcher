@@ -3,7 +3,8 @@
 module TTWatcher
 module Torrents
   #
-  #
+  # +OtherModule+ module provides specific attributes and methods for torrent
+  # instance.
   #
   module OtherModule
   end # class TTWatcher::Torrents::SoftModule

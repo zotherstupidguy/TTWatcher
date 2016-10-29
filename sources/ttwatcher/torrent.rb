@@ -71,6 +71,16 @@ module TTWatcher
       end
       @type ||= :unknown
       @extra_params = extra_params.dup
+
+    rescue NameError => exception
+      notificate_module_not_found(exception)
+      return @extra_params = nil
+    end
+
+    def notificate_module_not_found(exception)
+      msg = "+Torrent+ extension error. Module not found: <<< #{exception.message.split.last} >>>"
+      MessageError.send msg
+      warn msg
     end
   end # class TTWatcher::Torrent
 end # module TTWatcher

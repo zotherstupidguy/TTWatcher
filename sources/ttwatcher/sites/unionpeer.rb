@@ -12,7 +12,7 @@ module Sites
     private
 
     def initialize
-      super 'unionpeer.org'
+      super 'unionpeer.org', :unionpeer
     end
 
     def default_connection_settings

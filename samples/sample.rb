@@ -2,21 +2,22 @@
 
 require_relative '../sources/ttwatcher'
 
-search_text = 'учебник'
+search_text = 'алиса'
 
 torrents = TTWatcher::TorrentAgent.find search_text
 
 puts '-----' * 20
 puts "search phrase:  #{search_text}"
 puts "totally found:  #{torrents.count}", ""
-puts "from megashara: #{torrents.select { |t| t.tracker == 'megashara.com' }.count }"
-puts "from rutor.org: #{torrents.select { |t| t.tracker == 'new-ru.org' }.count    }"
-puts "from unionpeer: #{torrents.select { |t| t.tracker == 'unionpeer.org' }.count }"
-puts "from zooqle:    #{torrents.select { |t| t.tracker == 'zooqle.com' }.count    }"
+puts "from megashara: #{torrents.select { |t| t.tracker == :megashara }.count }"
+puts "from rutor.org: #{torrents.select { |t| t.tracker == :rutor }.count     }"
+puts "from unionpeer: #{torrents.select { |t| t.tracker == :unionpeer }.count }"
+puts "from zooqle:    #{torrents.select { |t| t.tracker == :zooqle }.count    }"
 puts '-----' * 20
 
 torrents.each do |t|
   puts "name:         #{t.name}"         if t.name
+  puts "type:         #{t.type}"         if t.type
   puts "description:  #{t.description}"  if t.description
   puts "url:          #{t.url}"          if t.url
   puts "size:         #{t.size}"         if t.size
@@ -30,3 +31,5 @@ torrents.each do |t|
   puts "tracker:      #{t.tracker}"      if t.tracker
   puts '-----' * 20
 end
+
+

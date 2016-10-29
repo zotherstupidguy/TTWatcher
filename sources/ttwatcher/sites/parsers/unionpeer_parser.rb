@@ -51,9 +51,9 @@ module Parsers
       url = unparsed_data.css('a[@class="small tr-dl"]').attr('href').to_s
       hsh[:download_url] = assigned_site.address(url)
 
-      hsh[:tracker] = assigned_site.to_s
+      hsh[:tracker] = assigned_site.name
 
-      Torrent.build hsh
+      Torrent.new hsh
     end
   end # class TTWatcher::Parsers::Unionpeer
 end # module TTWatcher::Parsers

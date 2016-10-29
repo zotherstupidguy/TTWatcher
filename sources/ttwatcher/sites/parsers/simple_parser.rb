@@ -103,7 +103,7 @@ module Parsers
     def notificate_about_parser_crash!(exception)
       msg = "Parser #{self.class} crashed with error: #{exception.inspect}"
       MessageError.send msg
-      warn msg, "\n\n\n", exception.backtrace, "\n\n\n"
+      warn "\n", msg, "\n", exception.backtrace, "\n"
     end
   end # class TTWatcher::Parsers::SimpleParser
 end # module TTWatcher::Parsers

@@ -1,28 +1,11 @@
 # encoding: utf-8
 
 module TTWatcher
-  class SoundTorrent < Torrent
-    class << self
-      #
-      #
-      #
-      def build(**params)
-        new params
-      end
-
-      private
-
-      def sub_types_mapping # todo: add sub-types! <note: if need>
-      end
-    end # class << self
-
-    # --------------------INSTANCE ZONE-------------------
-
-    private_class_method :sub_types_mapping
-
-    #
-    #
-    #
-    def sub_class_initialization(**params); end
-  end # class TTWatcher::SoundTorrent
+module Torrents
+  #
+  #
+  #
+  module SoundModule
+  end # class TTWatcher::Torrents::SoundModule
+end # module TTWatcher::Torrents
 end # module TTWatcher

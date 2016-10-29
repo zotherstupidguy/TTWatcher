@@ -1,0 +1,68 @@
+{
+  "rutor": {
+    "video": [
+      "hdtvrip",
+      "hdtv",
+      "hdrip",
+      "dvd5",
+      "hdtvrip-avc",
+      "dvd9",
+      "bdrip",
+      "blu-ray",
+      "bdrip-av",
+      "bdremux",
+      "web-dlrip",
+      "hdrip-avc",
+      "dvdrip",
+      "webrip",
+      "3xdvd9",
+      "2xdvd9",
+      "web-dl",
+      "satrip-avc",
+      "bdrip-avc",
+      "web-dlrip-avc",
+      "satrip",
+      "bdrip",
+      "hd",
+      "dvb",
+      "iptvrip",
+      "tvrip",
+      "iptvremux",
+      "dvdrip-avc",
+      "camrip",
+      "webrip-avc",
+      "dvdscr",
+      "2xdvd5",
+      "webdlrip-avc",
+      "5xdvd9"
+    ],
+    "sound": [
+      "mp3",
+      "flac",
+      "m4a",
+      "МР3",
+      "ape",
+      "aac"
+    ],
+    "book": [
+      "pdf",
+      "doc",
+      "fb2",
+      "djvu",
+      "epub",
+      "rtf"
+    ],
+    "soft": [
+      "pc"
+    ],
+    "game": [
+      "xbox360"
+    ],
+    "other": [
+      "jpg",
+      "png",
+      "jpeg",
+      "android"
+    ]
+  }
+}

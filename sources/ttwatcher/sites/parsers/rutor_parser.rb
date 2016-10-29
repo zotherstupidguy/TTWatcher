@@ -32,9 +32,9 @@ module Parsers
     #     ++   hsh[:url]              ==> ex. "example.torrent.side/12345"
     #     ++   hsh[:tracker]          ==> ex. "super-cool tracker"
     #     --   hsh[:author]           ==> ex. 'Bit kitty fun'
-    #     --   hsh[:added_date]       ==> ex. '2016-06-15'
-    #     --   hsh[:seeders]          ==> ex. 50042
-    #     --   hsh[:leeches]          ==> ex. 1
+    #     ++   hsh[:added_date]       ==> ex. '2016-06-15'
+    #     ++   hsh[:seeders]          ==> ex. 50042
+    #     ++   hsh[:leeches]          ==> ex. 1
     #     ++   hsh[:size]             ==> ex. "20000 mb"
     #     ++   hsh[:magnet_url]       ==> ex. "magnet:?xt=urn....................."
     #     ++   hsh[:download_url]     ==> ex. "example.torrent.side/12345/download"
@@ -46,13 +46,19 @@ module Parsers
       hsh[:magnet_url]  = unparsed_data.css('a')[1].attribute('href').to_s
       hsh[:url]         = unparsed_data.css('a')[2].attribute('href').to_s
       hsh[:name]        = unparsed_data.css('a')[2].text
-      hsh[:size]        = unparsed_data.css('td[@align="right"]').text
+      hsh[:added_date]  = unparsed_data.css('td')[0].text
+      hsh[:seeders]     = unparsed_data.css('td[@align="center"]').css('span')[0].text
+      hsh[:leeches]     = unparsed_data.css('td[@align="center"]').css('span')[1].text
 
-      hsh[:tracker]      = assigned_site.to_s
+      if (tmp_size = unparsed_data.css('td[@align="right"]')[1])
+        hsh[:size] = tmp_size.text
+      end
+
+      hsh[:tracker]      = assigned_site.name
       hsh[:download_url] = assigned_site.address(hsh[:short_link])
       hsh[:url]          = assigned_site.address(hsh[:url] )
 
-      Torrent.build hsh
+      Torrent.new hsh
     end
   end # class TTWatcher::Parsers::Rutor
 end # module TTWatcher::Parsers

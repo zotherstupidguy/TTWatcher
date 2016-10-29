@@ -5,7 +5,9 @@ module TTWatcher
 
   require 'forwardable'
   require 'singleton'
+  require 'json'
   require 'logger'
+  require 'date'
 
   # dependencies from rubygems.org
 
@@ -27,15 +29,15 @@ module TTWatcher
     # project structure
 
     load folder: 'torrent/normalization',
-         files: %w(abstract_normalizer default megashara rutor unionpeer zooqle normalization)
+         files: %w(helpers default megashara rutor unionpeer zooqle normalization)
 
     load folder: 'connection',
          files: %w(scheme url proxy)
 
-    load files: %w(message connection torrent)
+    load files: %w(message connection torrent torrent_list)
 
     load folder: 'torrent',
-         files: %w(torrent_list book game other soft sound unknown video torrents)
+         files: %w(book game other soft sound unknown video torrents)
 
     load folder: 'sites/parsers',
          files: %w(abstract_parser simple_parser)

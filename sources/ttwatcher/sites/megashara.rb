@@ -12,7 +12,7 @@ module Sites
     private
 
     def initialize
-      super 'megashara.com'
+      super 'megashara.com', :megashara
     end
 
     def default_connection_settings

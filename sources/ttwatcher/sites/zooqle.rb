@@ -12,7 +12,7 @@ module Sites
     private
 
     def initialize
-      super 'zooqle.com'
+      super 'zooqle.com', :zooqle
     end
 
     def default_connection_settings; {} end

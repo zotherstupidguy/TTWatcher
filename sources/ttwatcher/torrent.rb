@@ -2,69 +2,6 @@
 
 module TTWatcher
   class Torrent
-    class << self
-      #
-      #
-      #
-      def build(**data)
-        normalization! data
-        determinate_torrent_type! data
-        build_torrent data
-      end
-
-      private
-
-      #
-      #
-      #
-      def normalization!(**params)
-        Normalization.standardizate! params
-      end
-
-      #
-      #
-      #
-      def determinate_torrent_type!(**params)
-        Torrents.determinate_torrent_type! params
-      end
-
-      #
-      #
-      #
-      def build_torrent(**hsh)
-        (type = hsh[:torrent_type]) && hsh.delete(:torrent_type)
-
-        torrent = if torrent_primary_types_mapping[type]
-                    torrent_primary_types_mapping[type]
-                  else
-                    torrent_primary_types_mapping[:unknown]
-                  end
-        torrent.build hsh
-      end
-
-      #
-      # output: hash with keys associated with torrent class. For any key that
-      #         not in list below it returns UnknownTorrent class.
-      #
-      # note: @@TORRENT_PRIMARY_TYPES_MAPPING used for caching.
-      #
-      def torrent_primary_types_mapping
-        @@TORRENT_PRIMARY_TYPES_MAPPING ||=
-          begin
-            tmp = Hash.new { |key, value| key[value] = UnknownTorrent }
-            tmp.merge({ :video   => VideoTorrent,
-                        :sound   => SoundTorrent,
-                        :soft    => SoftTorrent,
-                        :game    => GameTorrent,
-                        :book    => BookTorrent,
-                        :other   => OtherTorrent,
-                        :unknown => UnknownTorrent })
-          end
-      end
-    end # class < self
-
-    # --------------------INSTANCE ZONE-------------------
-
     #
     # _any_ torrent instance have this attributes:
     #
@@ -75,12 +12,27 @@ module TTWatcher
     #
     #
     #
-    def initialize(**params)
+    attr_reader :type
+
+    #
+    #
+    #
+    def initialize(params = {})
+      params_normalization params
       default_initialization params
-      sub_class_initialization params
+      extend_instance_by_associated_module params[:extra]
     end
 
     private
+
+    attr_reader :extra_params
+
+    #
+    #
+    #
+    def params_normalization(params)
+      Torrents::Normalization.standardizate! params
+    end
 
     #
     # input: +params+ : Hash (allowed key/value pairs below)
@@ -109,12 +61,16 @@ module TTWatcher
     #
     #
     #
-    def sub_class_initialization(**params); end # +abstract+
+    def extend_instance_by_associated_module(extra_params = {})
+      return if extra_params.nil? || extra_params.empty?
 
-    #
-    #
-    #
-    class AbstractClassError < StandardError
-      def initialize; super "You cannot create Torrent instance directly!" end; end
+      if (type = extra_params[:type]) && extra_params.delete(:type)
+        mod = TTWatcher::Torrents.const_get("#{type.to_s.capitalize + 'Module'}")
+        self.extend mod
+        @type = type
+      end
+      @type ||= :unknown
+      @extra_params = extra_params.dup
+    end
   end # class TTWatcher::Torrent
 end # module TTWatcher

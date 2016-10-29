@@ -1,19 +1,11 @@
 # encoding: utf-8
 
 module TTWatcher
+module Torrents
   #
   #
   #
-  class UnknownTorrent < Torrent
-    #
-    #
-    #
-    def self.build(**params)
-      new params
-    end
-
-    # --------------------INSTANCE ZONE-------------------
-
-    def sub_class_initialization(**params); end
-  end # class TTWatcher::UnknownTorrent
+  module UnknownModule
+  end # class TTWatcher::Torrents::UnknownModule
+end # module TTWatcher::Torrents
 end # module TTWatcher

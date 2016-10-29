@@ -1,26 +1,11 @@
 # encoding: utf-8
 
 module TTWatcher
-  class OtherTorrent < Torrent
-    class << self
-      #
-      #
-      #
-      def build(**params)
-        new params
-      end
-
-      private
-
-      def sub_types_mapping # todo: add sub-types!
-      end
-    end # class << self
-
-    # --------------------INSTANCE ZONE-------------------
-
-    private_class_method :sub_types_mapping
-
-    def sub_class_initialization(**params)
-    end
-  end # class TTWatcher::OtherTorrent
+module Torrents
+  #
+  #
+  #
+  module OtherModule
+  end # class TTWatcher::Torrents::SoftModule
+end # module TTWatcher::Torrents
 end # module TTWatcher

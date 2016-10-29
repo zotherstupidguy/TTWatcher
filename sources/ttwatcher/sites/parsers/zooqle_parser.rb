@@ -68,9 +68,9 @@ module Parsers
         hsh[:leeches] = tmp_td5[2].text.to_i
       end
 
-      hsh[:tracker] = assigned_site.to_s
+      hsh[:tracker] = assigned_site.name
 
-      Torrent.build hsh
+      Torrent.new hsh
     end
   end # class TTWatcher::Parsers::Zooqle
 end # module TTWatcher::Parsers

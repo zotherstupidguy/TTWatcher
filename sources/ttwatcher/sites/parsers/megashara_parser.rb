@@ -53,9 +53,9 @@ module Parsers
       hsh[:seeders]     = unparsed_data.css('td')[4].text.to_i
       hsh[:leeches]     = unparsed_data.css('td')[5].text.to_i
 
-      hsh[:tracker] = assigned_site.to_s
+      hsh[:tracker] = assigned_site.name
 
-      Torrent.build hsh
+      Torrent.new hsh
     end
   end # class TTWatcher::Parsers::Megashara
 end # module TTWatcher::Parsers

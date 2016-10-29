@@ -3,11 +3,11 @@
 module TTWatcher
 module Sites
   class Site
-    attr_reader   :hostname
-    attr_accessor :connection
+    attr_reader :hostname, :connection, :name
 
-    def initialize(name)
-      @hostname = name
+    def initialize(hostname, name=nil)
+      @hostname = hostname
+      @name = name || hostname.to_sym
       @connection ||= TTWatcher::Connection.new(default_connection_settings)
     end
 

@@ -4,10 +4,10 @@ module TTWatcher
   module Sites
 
     TORRENT_LIST_MAPPING = {
-      :megashara => Megashara.instance,
+  #    :megashara => Megashara.instance,
       :rutor     => Rutor.instance,
-      :unionpeer => Unionpeer.instance,
-      :zooqle    => Zooqle.instance
+ #     :unionpeer => Unionpeer.instance,
+#      :zooqle    => Zooqle.instance
     }
 
     #
@@ -25,9 +25,6 @@ module TTWatcher
     #
     def self.get_site_by_name(name)
       site = TORRENT_LIST_MAPPING[name.downcase.to_sym]
-
-      # <!!! why this does not work???>
-      # site.nil? ? raise SiteNotFound.new(name) : site
       if site.nil?
         raise SiteNotFound.new(name)
       else
